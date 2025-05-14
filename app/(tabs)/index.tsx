@@ -5,6 +5,8 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
 } from "react-native";
+import { useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { View, Text } from "@/components/Themed";
 import Animated, {
@@ -17,11 +19,12 @@ import Animated, {
   withTiming,
   type EasingFunction,
 } from "react-native-reanimated";
-import Step1 from "../../components/steps/Step1";
-import { useState } from "react";
+
+import Step1 from "@/components/steps/Step1";
 import Step2 from "@/components/steps/Step2";
-import Step3 from "../../components/steps/Step3";
-import { SafeAreaView } from "react-native-safe-area-context";
+import Step3 from "@/components/steps/Step3";
+import Month from "@/components/steps/Month";
+import Year from "@/components/steps/Year";
 
 const ANIMATION_EASING: EasingFunction = Easing.out(Easing.exp);
 const ANIMATION_DURATION = 250;
@@ -51,7 +54,7 @@ export default function TabOneScreen() {
   const toggleCalendarModal = () => setShowCalendarModal((p) => !p);
   const hideCalendarModal = () => setShowCalendarModal(false);
 
-  const onNext = () => setIndex((prev) => Math.min(prev + 1, 2));
+  const onNext = () => setIndex((prev) => Math.min(prev + 1, 4));
   const onBack = () => setIndex((prev) => Math.max(prev - 1, 0));
 
   const animatedStyle = useAnimatedStyle(() => {
@@ -104,7 +107,7 @@ export default function TabOneScreen() {
                   style={styles.animatedView}
                   key={`step_${index}`}
                   entering={FadeIn}
-                  exiting={FadeOut}
+                  // exiting={FadeOut.duration(100)}
                   onLayout={(e) => {
                     const measuredHeight = e.nativeEvent.layout.height;
                     console.log(
@@ -117,6 +120,8 @@ export default function TabOneScreen() {
                   {index === 0 && <Step1 onNext={onNext} onBack={onBack} />}
                   {index === 1 && <Step2 onNext={onNext} onBack={onBack} />}
                   {index === 2 && <Step3 onNext={onNext} onBack={onBack} />}
+                  {index === 3 && <Month onNext={onNext} onBack={onBack} />}
+                  {index === 4 && <Year onNext={onNext} onBack={onBack} />}
                 </Animated.View>
               </Animated.View>
             </Animated.View>

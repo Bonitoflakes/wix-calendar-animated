@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Calendar } from "react-native-calendars";
 
 type Props = {
@@ -11,30 +11,35 @@ const Step3: React.FC<Props> = ({ onNext, onBack }) => {
     <View>
       <Calendar />
 
-      <View style={{ marginTop: 200 }}>
-        <TouchableOpacity onPress={onBack} activeOpacity={0.8} style={styles.button}>
+      <View style={{ marginTop: 100, padding: 20, flexDirection: "row", gap: 20 }}>
+        <Pressable onPress={onBack} style={styles.button}>
           <Text style={styles.buttonText}>Cancel</Text>
-        </TouchableOpacity>
+        </Pressable>
+
+        <Pressable onPress={onNext} style={[styles.button, { backgroundColor: "pink" }]}>
+          <Text style={styles.buttonText}>Next</Text>
+        </Pressable>
       </View>
     </View>
   );
 };
+
+export default Step3;
 
 const styles = StyleSheet.create({
   button: {
     backgroundColor: "#ececec",
     height: 48,
     borderRadius: 12,
-    width: "100%",
-    flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     paddingHorizontal: 12,
     gap: 8,
     marginVertical: 20,
+    flex: 1,
   },
   buttonText: {
     fontSize: 16,
     fontFamily: "SpaceMonoBold",
   },
 });
-export default Step3;
