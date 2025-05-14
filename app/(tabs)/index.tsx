@@ -21,6 +21,7 @@ import Animated, {
   withTiming,
   type EasingFunction,
   SlideInUp,
+  LinearTransition,
 } from "react-native-reanimated";
 
 import Step1 from "@/components/steps/Step1";
@@ -30,7 +31,7 @@ import Month from "@/components/steps/Month";
 import Year from "@/components/steps/Year";
 
 const ANIMATION_EASING: EasingFunction = Easing.out(Easing.exp);
-const ANIMATION_DURATION = 250;
+const ANIMATION_DURATION = 500;
 
 const ANIMATION_CONFIGS_IOS = {
   damping: 500,
@@ -60,6 +61,7 @@ export default function TabOneScreen() {
 
   const toggleCalendarModal = () => setShowCalendarModal((p) => !p);
   const hideCalendarModal = () => {
+    animatedHeight.value = 0;
     setShowCalendarModal(false);
     setIndex(0);
   };
@@ -124,35 +126,34 @@ export default function TabOneScreen() {
               backgroundColor: "rgba(0,0,0,0.0)",
             }}
           >
-            <Animated.View
-              style={[styles.parentView]}
-              entering={SlideInUp}
-              // className={}
-            >
-              <Animated.View style={[styles.animatedBox, animatedStyle]}>
-                <Animated.View
-                  style={styles.animatedView}
-                  key={`step_${index}`}
-                  entering={FadeIn}
-                  exiting={FadeOut.duration(100)}
-                  ref={containerRef}
-                  onLayout={(e) => {
-                    const measuredHeight = e.nativeEvent.layout.height;
-                    // console.log(
-                    //   "🚀🚀🚀 ~ TabOneScreen ~ measuredHeight:",
-                    //   measuredHeight
-                    // );
-                    animatedHeight.value = measuredHeight;
-                  }}
-                >
-                  {index === 0 && <Step1 onNext={onNext} onBack={onBack} />}
-                  {index === 1 && <Step2 onNext={onNext} onBack={onBack} />}
-                  {index === 2 && <Step3 onNext={onNext} onBack={onBack} />}
-                  {index === 3 && <Month onNext={onNext} onBack={onBack} />}
-                  {index === 4 && <Year onNext={onNext} onBack={onBack} />}
+            <TouchableWithoutFeedback>
+              <Animated.View style={[styles.parentView]} entering={SlideInUp}>
+                <Animated.View style={[styles.animatedBox, animatedStyle]}>
+                  <Animated.View
+                    style={styles.animatedView}
+                    key={`step_${index}`}
+                    entering={FadeIn.duration(100)}
+                    // exiting={FadeOut.duration(100)}
+                    ref={containerRef}
+                    onLayout={(e) => {
+                      const measuredHeight = e.nativeEvent.layout.height;
+                      // console.log(
+                      //   "🚀🚀🚀 ~ TabOneScreen ~ measuredHeight:",
+                      //   measuredHeight
+                      // );
+                      animatedHeight.value = measuredHeight;
+                    }}
+                    layout={LinearTransition.springify().damping(900).stiffness(500)}
+                  >
+                    {index === 0 && <Step1 onNext={onNext} onBack={onBack} />}
+                    {index === 1 && <Step2 onNext={onNext} onBack={onBack} />}
+                    {index === 2 && <Step3 onNext={onNext} onBack={onBack} />}
+                    {index === 3 && <Month onNext={onNext} onBack={onBack} />}
+                    {index === 4 && <Year onNext={onNext} onBack={onBack} />}
+                  </Animated.View>
                 </Animated.View>
               </Animated.View>
-            </Animated.View>
+            </TouchableWithoutFeedback>
           </View>
         </TouchableWithoutFeedback>
       </Modal>
