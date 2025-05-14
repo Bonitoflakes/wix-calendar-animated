@@ -11,6 +11,8 @@ import Animated, {
   measure,
   runOnUI,
   useAnimatedRef,
+  FadeIn,
+  FadeOut,
 } from "react-native-reanimated";
 
 export default function TabTwoScreen() {
@@ -38,21 +40,25 @@ export default function TabTwoScreen() {
   const onBack = () => setIndex((prev) => Math.max(prev - 1, 0));
 
   return (
-    <View style={styles.container}>
+    <Animated.View style={styles.container}>
       <Animated.View style={[styles.stepWrapper, animatedStyle]}>
-        <Animated.View ref={stepRef}>
+        <Animated.View
+          ref={stepRef}
+          entering={FadeIn}
+          exiting={FadeOut}
+        >
           {index === 0 && <Step1 onNext={onNext} onBack={onBack} />}
           {index === 1 && <Step2 onNext={onNext} onBack={onBack} />}
         </Animated.View>
       </Animated.View>
-    </View>
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    margin: 20,
     gap: 20,
     marginTop: "auto",
     justifyContent: "flex-end",
@@ -61,7 +67,9 @@ const styles = StyleSheet.create({
   },
   stepWrapper: {
     backgroundColor: "white",
+    flex: 1,
     borderRadius: 20,
-    // padding: 20,
+    position: "absolute",
+    width: "100%",
   },
 });

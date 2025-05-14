@@ -13,7 +13,7 @@ const Step1: React.FC<Props> = ({ onNext, onBack }) => {
       <View style={styles.row}>
         <Text style={styles.title}>Options</Text>
         <TouchableOpacity onPress={onBack} activeOpacity={0.8} style={styles.xButton}>
-          <Feather size={16} name="x" />
+          <Feather size={16} name="alert-triangle" />
         </TouchableOpacity>
       </View>
       <View style={styles.gap}>
@@ -37,7 +37,6 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: "space-between",
     height: 250,
-    // backgroundColor: "orange",
     padding: 20,
     borderRadius: 20,
   },

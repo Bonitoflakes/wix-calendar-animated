@@ -58,7 +58,6 @@ const Step2: React.FC<Props> = ({ onBack, onNext }) => {
 
 const styles = StyleSheet.create({
   container: {
-    // backgroundColor: "pink",
     justifyContent: "space-between",
     padding: 20,
     borderRadius: 20,
