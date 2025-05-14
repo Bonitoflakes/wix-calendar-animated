@@ -47,7 +47,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   title: {
-    fontFamily: "SpaceMonoBold",
     fontWeight: "bold",
     fontSize: 20,
   },
@@ -71,7 +70,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 16,
-    fontFamily: "SpaceMonoBold",
   },
   dangerButton: {
     backgroundColor: "#FECDD5",

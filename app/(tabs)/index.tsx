@@ -3,9 +3,10 @@ import {
   Platform,
   Pressable,
   StyleSheet,
+  type View as TView,
   TouchableWithoutFeedback,
 } from "react-native";
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { View, Text } from "@/components/Themed";
@@ -16,8 +17,10 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
+  SlideInDown,
   withTiming,
   type EasingFunction,
+  SlideInUp,
 } from "react-native-reanimated";
 
 import Step1 from "@/components/steps/Step1";
@@ -47,12 +50,19 @@ const ANIMATION_CONFIGS =
   Platform.OS === "ios" ? ANIMATION_CONFIGS_IOS : ANIMATION_CONFIGS_ANDROID;
 
 export default function TabOneScreen() {
-  const height = useSharedValue<number>(0);
+  const animatedHeight = useSharedValue<number>(0);
   const [index, setIndex] = useState(0);
+  const [paddingTop, setPaddingTop] = useState(0);
   const [showCalendarModal, setShowCalendarModal] = useState(false);
 
+  const containerRef = useRef<null | TView>(null);
+  const buttonRef = useRef<null | TView>(null);
+
   const toggleCalendarModal = () => setShowCalendarModal((p) => !p);
-  const hideCalendarModal = () => setShowCalendarModal(false);
+  const hideCalendarModal = () => {
+    setShowCalendarModal(false);
+    setIndex(0);
+  };
 
   const onNext = () => setIndex((prev) => Math.min(prev + 1, 4));
   const onBack = () => setIndex((prev) => Math.max(prev - 1, 0));
@@ -61,19 +71,37 @@ export default function TabOneScreen() {
     return {
       height:
         Platform.OS === "ios"
-          ? withSpring(height.value, ANIMATION_CONFIGS)
-          : withTiming(height.value, {
+          ? withSpring(animatedHeight.value, ANIMATION_CONFIGS)
+          : withTiming(animatedHeight.value, {
               duration: ANIMATION_DURATION,
               easing: ANIMATION_EASING,
             }),
     };
   });
 
+  useLayoutEffect(() => {
+    buttonRef.current?.measure((x, y, width, height, pageX, pageY) => {
+      console.log(`{"===height": ${height}, "width": ${width}, "x": ${x}, "y": ${y}}`);
+      console.log(`UseLayoutEffect: PageX:${pageX} PageY:${pageY} `);
+      // setPaddingTop(pageY);
+    });
+  }, []);
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "pink" }}>
       <Pressable
-        style={{ paddingHorizontal: 20, paddingVertical: 10, borderWidth: 1, margin: 20 }}
+        style={{
+          paddingHorizontal: 20,
+          paddingVertical: 10,
+          borderWidth: 1,
+          marginHorizontal: 20,
+        }}
         onPress={toggleCalendarModal}
+        onLayout={(e) => {
+          console.log(e.nativeEvent.layout, "onLayout");
+          setPaddingTop(e.nativeEvent.layout.y);
+        }}
+        ref={buttonRef}
       >
         <Text style={{ fontSize: 20 }}>Open Calendar</Text>
       </Pressable>
@@ -91,30 +119,30 @@ export default function TabOneScreen() {
         >
           <View
             style={{
-              paddingTop: 100,
+              paddingTop,
               flex: 1,
-              backgroundColor: "rgba(0,0,0,0.5)",
+              backgroundColor: "rgba(0,0,0,0.0)",
             }}
           >
-            <Text>asfda fasd fasdf asdf asd Ipsum</Text>
-            <Text>asfda fasd fasdf asdf asd Ipsum</Text>
-            <Text>asfda fasd fasdf asdf asd Ipsum</Text>
-            <Text>asfda fasd fasdf asdf asd Ipsum</Text>
-
-            <Animated.View style={[styles.parentView]}>
+            <Animated.View
+              style={[styles.parentView]}
+              entering={SlideInUp}
+              // className={}
+            >
               <Animated.View style={[styles.animatedBox, animatedStyle]}>
                 <Animated.View
                   style={styles.animatedView}
                   key={`step_${index}`}
                   entering={FadeIn}
-                  // exiting={FadeOut.duration(100)}
+                  exiting={FadeOut.duration(100)}
+                  ref={containerRef}
                   onLayout={(e) => {
                     const measuredHeight = e.nativeEvent.layout.height;
-                    console.log(
-                      "🚀🚀🚀 ~ TabOneScreen ~ measuredHeight:",
-                      measuredHeight
-                    );
-                    height.value = measuredHeight;
+                    // console.log(
+                    //   "🚀🚀🚀 ~ TabOneScreen ~ measuredHeight:",
+                    //   measuredHeight
+                    // );
+                    animatedHeight.value = measuredHeight;
                   }}
                 >
                   {index === 0 && <Step1 onNext={onNext} onBack={onBack} />}
@@ -161,7 +189,7 @@ export default function TabOneScreen() {
 const styles = StyleSheet.create({
   parentView: {
     justifyContent: "flex-end",
-    padding: 20,
+    paddingHorizontal: 20,
     // backgroundColor: "black",
   },
   animatedBox: {

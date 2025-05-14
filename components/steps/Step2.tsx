@@ -80,7 +80,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   title: {
-    fontFamily: "SpaceMonoBold",
     fontWeight: "bold",
     fontSize: 20,
   },
@@ -94,14 +93,12 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 14,
-    fontFamily: "SpaceMono",
     color: "#4c4c4c",
     marginTop: 12,
   },
   tip: {
     flex: 1,
     paddingLeft: 8,
-    fontFamily: "SpaceMono",
     color: "#4c4c4c",
   },
   button2: {
@@ -115,14 +112,12 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   cancelText: {
-    fontFamily: "SpaceMonoBold",
     fontSize: 14,
   },
   revealButton: {
     backgroundColor: "#02B3FF",
   },
   revealText: {
-    fontFamily: "SpaceMonoBold",
     fontSize: 14,
     color: "white",
   },

@@ -83,6 +83,5 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 16,
-    fontFamily: "SpaceMonoBold",
   },
 });
