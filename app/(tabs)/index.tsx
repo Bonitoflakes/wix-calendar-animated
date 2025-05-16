@@ -91,6 +91,7 @@ export default function TabOneScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "pink" }}>
+      <View style={{ height: 100 }} />
       <Pressable
         style={{
           paddingHorizontal: 20,
@@ -101,7 +102,7 @@ export default function TabOneScreen() {
         onPress={toggleCalendarModal}
         onLayout={(e) => {
           console.log(e.nativeEvent.layout, "onLayout");
-          setPaddingTop(e.nativeEvent.layout.y);
+          setPaddingTop(e.nativeEvent.layout.y + 10);
         }}
         ref={buttonRef}
       >
@@ -143,7 +144,7 @@ export default function TabOneScreen() {
                       // );
                       animatedHeight.value = measuredHeight;
                     }}
-                    layout={LinearTransition.springify().damping(900).stiffness(500)}
+                    // layout={LinearTransition.springify().damping(900).stiffness(500)}
                   >
                     {index === 0 && <Step1 onNext={onNext} onBack={onBack} />}
                     {index === 1 && <Step2 onNext={onNext} onBack={onBack} />}
