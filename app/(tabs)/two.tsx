@@ -1,4 +1,11 @@
-import { Pressable, StyleSheet, Text, type LayoutChangeEvent } from "react-native";
+import {
+  Modal,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableWithoutFeedback,
+  type LayoutChangeEvent,
+} from "react-native";
 
 import { View } from "@/components/Themed";
 import Step1 from "../../components/steps/Step1";
@@ -17,9 +24,11 @@ import Animated, {
   FadeInDown,
   FadeOutDown,
   FadeInUp,
+  FadingTransition,
 } from "react-native-reanimated";
 
 const _layout = LinearTransition.springify().damping(500).stiffness(500);
+const _fadeLayout = FadingTransition.duration(240);
 
 export default function TabTwoScreen() {
   const [index, setIndex] = useState(0);
@@ -62,6 +71,9 @@ export default function TabTwoScreen() {
           paddingVertical: 10,
           borderWidth: 1,
           margin: 20,
+          position: "absolute",
+          top: 300,
+          width: "100%",
         }}
         onPress={toggleCalendarModal}
         onLayout={(e) => {
@@ -72,19 +84,42 @@ export default function TabTwoScreen() {
         <Text style={{ fontSize: 20 }}>Open Calendar</Text>
       </Pressable>
 
-      <Animated.View
-        style={[styles.stepWrapper]}
-        entering={FadeInUp.duration(250)}
-        layout={_layout}
+      <Modal
+        transparent
+        animationType="fade"
+        visible={showCalendarModal}
+        onRequestClose={hideCalendarModal}
+        accessible={showCalendarModal}
       >
-        <Animated.View
-          // ref={stepRef}
-          layout={_layout}
+        <TouchableWithoutFeedback
+          onPress={hideCalendarModal}
+          accessible={showCalendarModal}
         >
-          {index === 0 && <Step1 onNext={onNext} onBack={onBack} />}
-          {index === 1 && <Step2 onNext={onNext} onBack={onBack} />}
-        </Animated.View>
-      </Animated.View>
+          <Animated.View
+            style={{
+              padding: 20,
+              paddingTop,
+              flex: 1,
+              width: "100%",
+              backgroundColor: "rgba(0,0,0,0.0)",
+            }}
+            // layout={_layout}
+          >
+            <TouchableWithoutFeedback>
+              <Animated.View
+                style={[styles.stepWrapper]}
+                entering={FadeInUp.duration(2500)}
+                layout={_layout}
+              >
+                <Animated.View entering={FadeInUp.duration(250)} layout={_layout}>
+                  {index === 0 && <Step1 onNext={onNext} onBack={onBack} />}
+                  {index === 1 && <Step2 onNext={onNext} onBack={onBack} />}
+                </Animated.View>
+              </Animated.View>
+            </TouchableWithoutFeedback>
+          </Animated.View>
+        </TouchableWithoutFeedback>
+      </Modal>
     </View>
   );
 }
@@ -95,6 +130,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     backgroundColor: "green",
     padding: 20,
+    width: "100%",
   },
   stepWrapper: {
     backgroundColor: "white",
