@@ -78,6 +78,9 @@ importers:
       '@types/react':
         specifier: ~19.0.10
         version: 19.0.14
+      '@types/xdate':
+        specifier: ^0.8.35
+        version: 0.8.35
       eslint:
         specifier: ^9.27.0
         version: 9.27.0
@@ -1091,6 +1094,9 @@ packages:
 
   '@types/tough-cookie@4.0.5':
     resolution: {integrity: sha512-/Ad8+nIOV7Rl++6f1BdKxFSMgmoqEoYbHRpPcx3JEfv8VRsQe9Z4mCXeJBzxs7mbHY/XOZZuXlRNfhpVPbs6ZA==}
+
+  '@types/xdate@0.8.35':
+    resolution: {integrity: sha512-bOzSX26UoY1IbVanQPw5KRfM6X1REw5kUtp0/H0zRakXIjb1N8/gOA0PXNiEvmgaZlCC3EOIfEWBZVkzxfCVqw==}
 
   '@types/yargs-parser@21.0.3':
     resolution: {integrity: sha512-I4q9QU9MQv4oEOz4tAHJtNz1cwuLxn2F3xcc2iV5WdqLPpUnj30aUuxt1mAxYTG+oe8CZMV/+6rU4S4gRDzqtQ==}
@@ -6050,6 +6056,8 @@ snapshots:
   '@types/stack-utils@2.0.3': {}
 
   '@types/tough-cookie@4.0.5': {}
+
+  '@types/xdate@0.8.35': {}
 
   '@types/yargs-parser@21.0.3': {}
 

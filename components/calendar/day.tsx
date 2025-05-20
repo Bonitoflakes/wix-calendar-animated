@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, View, Text } from "react-native";
 import { type DateData } from "react-native-calendars";
 import { type BasicDayProps } from "react-native-calendars/src/calendar/day/basic";
 
-type CustomDayProps = BasicDayProps & {
+export type CustomDayProps = BasicDayProps & {
   date?: DateData;
 };
 
