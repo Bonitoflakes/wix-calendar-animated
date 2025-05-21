@@ -34,8 +34,8 @@ export default React.memo(CustomDay);
 const styles = StyleSheet.create({
   container: {
     display: "flex",
-    width: 31.5,
-    height: 31.5,
+    width: 36,
+    height: 36,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 4,
@@ -48,6 +48,7 @@ const styles = StyleSheet.create({
   text: {
     color: "#52575C",
     fontFamily: "Poppins-regular",
+    fontSize: 14,
   },
   selectedText: {
     color: "white",

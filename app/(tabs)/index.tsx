@@ -118,6 +118,50 @@ type CustomCalendarProps = {
   renderDay: (data: CustomDayProps) => JSX.Element;
 };
 
+const customTheme: Theme = {
+  arrowStyle: {
+    backgroundColor: "#F2F2F5",
+    padding: 0,
+    width: 36,
+    height: 36,
+    borderRadius: 4,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  "stylesheet.calendar.main": {
+    container: {
+      padding: 20,
+      backgroundColor: "white",
+      borderRadius: 8,
+    },
+  },
+  "stylesheet.calendar.header": {
+    header: {
+      paddingLeft: 8,
+      paddingRight: 8,
+      marginTop: 0,
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    week: {
+      marginTop: 16,
+      flexDirection: "row",
+      justifyContent: "space-around",
+    },
+    dayHeader: {
+      marginTop: 2,
+      marginBottom: 7,
+      flex: 1,
+      textAlign: "center",
+      fontSize: 12,
+      fontFamily: "Lato",
+      fontWeight: 700,
+      color: "#5A5A5A",
+    },
+  },
+};
+
 const CustomCalendar = ({
   markedDate,
   handleDayPress,
@@ -128,30 +172,6 @@ const CustomCalendar = ({
   renderArrow,
   renderDay,
 }: CustomCalendarProps) => {
-  const customTheme: Theme = {
-    arrowStyle: {
-      backgroundColor: "#F2F2F5",
-      padding: 9,
-    },
-    "stylesheet.calendar.main": {
-      container: {
-        padding: 20,
-        backgroundColor: "white",
-        borderRadius: 8,
-      },
-    },
-    "stylesheet.calendar.header": {
-      header: {
-        paddingLeft: 0,
-        paddingRight: 0,
-        marginTop: 0,
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-      },
-    },
-  };
-
   return (
     <>
       <Calendar

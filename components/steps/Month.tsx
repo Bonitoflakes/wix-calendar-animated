@@ -51,7 +51,7 @@ const Month: React.FC<Props> = ({
     <View style={[styles.container]}>
       {/* Month Header */}
       <View style={[styles.headerContainer]}>
-        <Pressable onPress={goToPrevYear}>
+        <Pressable onPress={goToPrevYear} style={styles.headerArrow}>
           <Ionicons name="arrow-back" size={24} color="black" />
         </Pressable>
 
@@ -60,28 +60,33 @@ const Month: React.FC<Props> = ({
           onPress={() => onNext()}
           accessibilityLabel="year-header"
         >
-          <Text>{currentDate.getFullYear()}</Text>
+          <Text style={styles.headerTitle}>{currentDate.getFullYear()}</Text>
         </Pressable>
 
-        <Pressable onPress={goToNextYear}>
+        <Pressable onPress={goToNextYear} style={styles.headerArrow}>
           <Ionicons name="arrow-forward" size={24} color="black" />
         </Pressable>
       </View>
 
       {/* Month Body */}
       <View style={[styles.bodyContainer]}>
-        {_MONTHS.map((month, idx) => (
-          <Pressable
-            key={idx}
-            onPress={() => {
-              updateMonth(idx);
-              onBack();
-            }}
-            style={[styles.monthButton, currentMonth === idx && styles.activeMonthButton]}
-          >
-            <Text>{month}</Text>
-          </Pressable>
-        ))}
+        {_MONTHS.map((month, idx) => {
+          const isActive = currentMonth === idx;
+          return (
+            <Pressable
+              key={idx}
+              onPress={() => {
+                updateMonth(idx);
+                onBack();
+              }}
+              style={[styles.monthButton, isActive && styles.activeMonthButton]}
+            >
+              <Text style={[styles.monthText, isActive && styles.activeMonthText]}>
+                {month}
+              </Text>
+            </Pressable>
+          );
+        })}
       </View>
     </View>
   );
@@ -90,31 +95,50 @@ const Month: React.FC<Props> = ({
 export default Month;
 
 const styles = StyleSheet.create({
-  container: { backgroundColor: "white", width: "100%" },
+  container: { padding: 20, backgroundColor: "white", borderRadius: 8 },
   headerContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: 20,
     gap: 20,
     width: "100%",
+  },
+  headerArrow: {
+    backgroundColor: "#F2F2F5",
+    padding: 0,
+    width: 36,
+    height: 36,
+    borderRadius: 4,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  headerTitle: {
+    fontSize: 16,
+    fontFamily: "Lato",
+    fontWeight: 700,
   },
   bodyContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    padding: 20,
     gap: 20,
-    backgroundColor: "pink",
-    justifyContent: "space-evenly",
+    paddingTop: 20,
   },
   monthButton: {
-    minWidth: 100,
+    minWidth: 84,
     alignItems: "center",
     padding: 10,
-    borderRadius: 12,
-    backgroundColor: "#ececec",
+    flex: 1,
+    borderRadius: 4,
+  },
+  monthText: {
+    fontSize: 14,
+    fontFamily: "Lato",
+    color: "#52575C",
+  },
+  activeMonthText: {
+    color: "#0466C8",
   },
   activeMonthButton: {
-    backgroundColor: "blue",
+    backgroundColor: "#0466C833",
   },
 });
