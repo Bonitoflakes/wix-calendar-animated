@@ -3,8 +3,8 @@ import React, { useState, useMemo } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 type Props = {
-  onNext: () => void;
-  onSelectYear?: (year: number) => void;
+  onBack: () => void;
+  updateYear: (year: number) => void;
   disabledFromYear?: number;
   initialYear?: number;
   yearsPerPage?: number;
@@ -14,8 +14,8 @@ const START_YEAR = 1970;
 const END_YEAR = 2100;
 
 const Year: React.FC<Props> = ({
-  onNext,
-  onSelectYear,
+  onBack,
+  updateYear,
   disabledFromYear,
   initialYear,
   yearsPerPage = 12,
@@ -42,8 +42,9 @@ const Year: React.FC<Props> = ({
     if (disabledFromYear !== undefined && year >= disabledFromYear) {
       return;
     }
-    onSelectYear?.(year);
-    onNext();
+    console.log("Selected year:", year);
+    updateYear(year);
+    onBack();
   };
 
   return (
