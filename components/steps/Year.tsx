@@ -30,10 +30,33 @@ const Year: React.FC<Props> = ({
 
   const [page, setPage] = useState(initialPage);
 
+  const COLUMN_COUNT = 3;
+
   const years = useMemo(() => {
+    // start = 1970 + (10 * 12) = 1970 + 120 = 2090
+    // end = 2090 + 12 - 1 = min(2101, 2100) = 2100
     const start = START_YEAR + page * yearsPerPage;
+
+    console.log("🚀🚀🚀 ~ page:", page);
+    console.log("🚀🚀🚀 ~ years ~ start:", start);
+
     const end = Math.min(start + yearsPerPage - 1, END_YEAR);
-    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+
+    console.log("🚀🚀🚀 ~ years ~ end:", end);
+
+    const data = Array.from({ length: end - start + 1 }, (_, i) => start + i);
+
+    console.log("🚀🚀🚀 ~ years ~ data:", data);
+
+    const remainder = data.length % COLUMN_COUNT;
+    console.log("🚀🚀🚀 ~ years ~ remainder:", remainder);
+
+    if (remainder !== 0) {
+      const padding = Array(COLUMN_COUNT - remainder).fill(null);
+      data.push(...padding);
+    }
+
+    return data;
   }, [page, yearsPerPage]);
 
   const handlePrev = () => setPage((p) => Math.max(0, p - 1));
@@ -48,18 +71,24 @@ const Year: React.FC<Props> = ({
     onBack();
   };
 
+  const validYears = years.filter((y) => y !== null);
+
   return (
-    <View style={styles.mainContainer}>
-      <View style={styles.arrowRow}>
-        <Pressable onPress={handlePrev} disabled={page === 0}>
+    <View style={styles.container}>
+      <View style={styles.headerContainer}>
+        <Pressable onPress={handlePrev} disabled={page === 0} style={styles.headerArrow}>
           <Ionicons name="arrow-back" size={24} color={page === 0 ? "#ccc" : "#222"} />
         </Pressable>
 
-        <Text style={styles.rangeText}>
-          {years[0]} - {years[years.length - 1]}
+        <Text style={styles.headerTitle}>
+          {validYears[0]} - {validYears[validYears.length - 1]}
         </Text>
 
-        <Pressable onPress={handleNext} disabled={page === totalPages - 1}>
+        <Pressable
+          onPress={handleNext}
+          disabled={page === totalPages - 1}
+          style={styles.headerArrow}
+        >
           <Ionicons
             name="arrow-forward"
             size={24}
@@ -70,23 +99,24 @@ const Year: React.FC<Props> = ({
 
       {/* Year Grid */}
       <View style={styles.gridContainer}>
-        <FlatList
-          data={years}
-          keyExtractor={(item) => item.toString()}
-          numColumns={4}
-          renderItem={({ item }) => {
-            const disabled = disabledFromYear !== undefined && item >= disabledFromYear;
-            const isActive = currentYear === item;
-            return (
-              <YearItem
-                item={item}
-                handleYearSelect={handleYearSelect}
-                disabled={disabled}
-                isActive={isActive}
-              />
-            );
-          }}
-        />
+        {years.map((item, index) => {
+          if (item === null) {
+            return <View key={`empty-${index}`} style={styles.yearButton} />;
+          }
+
+          const isActive = currentYear === item;
+          const disabled = disabledFromYear !== undefined && item >= disabledFromYear;
+
+          return (
+            <YearItem
+              key={item}
+              item={item}
+              handleYearSelect={handleYearSelect}
+              disabled={disabled}
+              isActive={isActive}
+            />
+          );
+        })}
       </View>
     </View>
   );
@@ -95,37 +125,44 @@ const Year: React.FC<Props> = ({
 export default Year;
 
 const styles = StyleSheet.create({
-  mainContainer: {
+  container: {
     backgroundColor: "white",
     borderRadius: 8,
-    padding: 6,
+    padding: 20,
   },
-  arrowRow: {
+  headerContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    gap: 20,
     width: "100%",
-    padding: 12,
   },
-
-  rangeText: {
+  headerArrow: {
+    backgroundColor: "#F2F2F5",
+    padding: 0,
+    width: 36,
+    aspectRatio: 1,
+    borderRadius: 4,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  headerTitle: {
     fontSize: 16,
-    fontWeight: "500",
-    textAlign: "center",
+    fontFamily: "Lato",
+    fontWeight: 700,
   },
   gridContainer: {
-    padding: 6,
-  },
-  yearItemContainer: {
-    width: "25%", // 4 columns
-    padding: 6, // This creates the gap effect (12px total between items)
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 20,
+    paddingTop: 20,
   },
   yearButton: {
-    backgroundColor: "#ececec",
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    minWidth: 84,
     alignItems: "center",
+    padding: 10,
+    flex: 1,
+    borderRadius: 4,
   },
   yearButtonActive: {
     backgroundColor: "#0466C833",
@@ -159,26 +196,24 @@ const YearItem: React.FC<YearItemProps> = ({
   isActive,
 }) => {
   return (
-    <View style={styles.yearItemContainer}>
-      <Pressable
+    <Pressable
+      style={[
+        styles.yearButton,
+        disabled && styles.yearButtonDisabled,
+        isActive && styles.yearButtonActive,
+      ]}
+      onPress={() => !disabled && handleYearSelect(item)}
+      disabled={disabled}
+    >
+      <Text
         style={[
-          styles.yearButton,
-          disabled && styles.yearButtonDisabled,
-          isActive && styles.yearButtonActive,
+          styles.yearText,
+          disabled && styles.yearTextDisabled,
+          isActive && styles.yearTextActive,
         ]}
-        onPress={() => !disabled && handleYearSelect(item)}
-        disabled={disabled}
       >
-        <Text
-          style={[
-            styles.yearText,
-            disabled && styles.yearTextDisabled,
-            isActive && styles.yearTextActive,
-          ]}
-        >
-          {item}
-        </Text>
-      </Pressable>
-    </View>
+        {item}
+      </Text>
+    </Pressable>
   );
 };
