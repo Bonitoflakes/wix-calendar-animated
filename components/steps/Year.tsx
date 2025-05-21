@@ -37,19 +37,11 @@ const Year: React.FC<Props> = ({
     // end = 2090 + 12 - 1 = min(2101, 2100) = 2100
     const start = START_YEAR + page * yearsPerPage;
 
-    console.log("🚀🚀🚀 ~ page:", page);
-    console.log("🚀🚀🚀 ~ years ~ start:", start);
-
     const end = Math.min(start + yearsPerPage - 1, END_YEAR);
-
-    console.log("🚀🚀🚀 ~ years ~ end:", end);
 
     const data = Array.from({ length: end - start + 1 }, (_, i) => start + i);
 
-    console.log("🚀🚀🚀 ~ years ~ data:", data);
-
     const remainder = data.length % COLUMN_COUNT;
-    console.log("🚀🚀🚀 ~ years ~ remainder:", remainder);
 
     if (remainder !== 0) {
       const padding = Array(COLUMN_COUNT - remainder).fill(null);
@@ -66,7 +58,6 @@ const Year: React.FC<Props> = ({
     if (disabledFromYear !== undefined && year >= disabledFromYear) {
       return;
     }
-    console.log("Selected year:", year);
     updateYear(year);
     onBack();
   };
