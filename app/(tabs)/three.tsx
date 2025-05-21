@@ -100,7 +100,9 @@ export default function TabThreeScreen() {
         />
       )}
 
-      {step === 3 && <Year onBack={onPrevStep} updateYear={_updateYear} />}
+      {step === 3 && (
+        <Year onBack={onPrevStep} updateYear={_updateYear} currentDate={date} />
+      )}
     </View>
   );
 }
