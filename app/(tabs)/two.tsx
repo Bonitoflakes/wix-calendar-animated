@@ -81,7 +81,7 @@ export default function TabTwoScreen() {
           setPaddingTop(e.nativeEvent.layout.y);
         }}
       >
-        <Text style={{ fontSize: 20 }}>Open Calendar</Text>
+        <Text style={{ fontSize: 20 }}>Open Calendar page 2</Text>
       </Pressable>
 
       <Modal
