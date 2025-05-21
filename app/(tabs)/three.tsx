@@ -1,184 +1,209 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
-import { useCallback, useEffect, useMemo, useRef, useState, type JSX } from "react";
-import { Calendar, type DateData } from "react-native-calendars";
-import type { Direction, MarkedDates, Theme } from "react-native-calendars/src/types";
+import {
+  Modal,
+  Platform,
+  Pressable,
+  StyleSheet,
+  type View as TView,
+  TouchableWithoutFeedback,
+} from "react-native";
+import { useLayoutEffect, useRef, useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import CustomArrow from "@/components/calendar/arrows";
-import CustomDay, { type CustomDayProps } from "@/components/calendar/day";
-import Title from "@/components/calendar/title";
+import { View, Text } from "@/components/Themed";
+import Animated, {
+  Easing,
+  FadeIn,
+  FadeOut,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  SlideInDown,
+  withTiming,
+  type EasingFunction,
+  SlideInUp,
+  LinearTransition,
+} from "react-native-reanimated";
+
+import Step1 from "@/components/steps/Step1";
+import Step2 from "@/components/steps/Step2";
+import Step3 from "@/components/steps/Step3";
 import Month from "@/components/steps/Month";
 import Year from "@/components/steps/Year";
-import type { BasicDayProps } from "react-native-calendars/src/calendar/day/basic";
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const XDate = require("xdate");
+const ANIMATION_EASING: EasingFunction = Easing.out(Easing.exp);
+const ANIMATION_DURATION = 500;
 
-const today: XDate = new XDate();
+const ANIMATION_CONFIGS_IOS = {
+  damping: 500,
+  stiffness: 1000,
+  mass: 3,
+  overshootClamping: true,
+  restDisplacementThreshold: 10,
+  restSpeedThreshold: 10,
+};
 
-const _MAX_STEPS = 3;
-const _MIN_STEPS = 1;
+const ANIMATION_CONFIGS_ANDROID = {
+  duration: ANIMATION_DURATION,
+  easing: ANIMATION_EASING,
+};
 
-export default function TabThreeScreen() {
-  const [step, setStep] = useState(1);
-  const [date, setDate] = useState(today);
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+const ANIMATION_CONFIGS =
+  Platform.OS === "ios" ? ANIMATION_CONFIGS_IOS : ANIMATION_CONFIGS_ANDROID;
 
-  const _headerTitle = date.toString("MMMM yyyy");
-  const _initialDate = date.toString("i").split("T")[0];
+export default function TabOneScreen() {
+  const animatedHeight = useSharedValue<number>(0);
+  const [index, setIndex] = useState(0);
+  const [paddingTop, setPaddingTop] = useState(0);
+  const [showCalendarModal, setShowCalendarModal] = useState(false);
 
-  const markedDate = useMemo<MarkedDates>(() => {
-    return selectedDate
-      ? {
-          [selectedDate]: { selected: true, selectedColor: "blue" },
-        }
-      : {};
-  }, [selectedDate]);
+  const containerRef = useRef<null | TView>(null);
+  const buttonRef = useRef<null | TView>(null);
 
-  const onNextStep = () => setStep((p) => Math.min(p + 1, _MAX_STEPS));
-  const onPrevStep = () => setStep((p) => Math.max(p - 1, _MIN_STEPS));
+  const toggleCalendarModal = () => setShowCalendarModal((p) => !p);
+  const hideCalendarModal = () => {
+    animatedHeight.value = 0;
+    setShowCalendarModal(false);
+    setIndex(0);
+  };
 
-  const handleMonthChange = useCallback((data: DateData) => {
-    const dateString = data.dateString;
-    setDate(new XDate(dateString));
+  const onNext = () => setIndex((prev) => Math.min(prev + 1, 4));
+  const onBack = () => setIndex((prev) => Math.max(prev - 1, 0));
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      height:
+        Platform.OS === "ios"
+          ? withSpring(animatedHeight.value, ANIMATION_CONFIGS)
+          : withTiming(animatedHeight.value, {
+              duration: ANIMATION_DURATION,
+              easing: ANIMATION_EASING,
+            }),
+    };
+  });
+
+  useLayoutEffect(() => {
+    buttonRef.current?.measure((x, y, width, height, pageX, pageY) => {
+      console.log(`{"===height": ${height}, "width": ${width}, "x": ${x}, "y": ${y}}`);
+      console.log(`UseLayoutEffect: PageX:${pageX} PageY:${pageY} `);
+      // setPaddingTop(pageY);
+    });
   }, []);
-
-  const handleDayPress = useCallback((data: DateData) => {
-    const { dateString } = data;
-    setSelectedDate(dateString);
-    console.log("~ Selected date:", dateString);
-  }, []);
-
-  const _updateMonth = useCallback(
-    (month: number) => {
-      if (month < 0 || month > 11) throw new Error("Invalid month");
-      const newDate = new XDate(date);
-      newDate.setMonth(month);
-      setDate(newDate);
-    },
-    [date]
-  );
-
-  const _updateYear = useCallback(
-    (year: number) => {
-      if (year < 1970 || year > 2100) throw new Error("Invalid year");
-      const newDate = new XDate(date);
-      newDate.setFullYear(year);
-      setDate(newDate);
-    },
-    [date]
-  );
-
-  const renderArrow = useCallback(
-    (direction: Direction) => <CustomArrow direction={direction} />,
-    []
-  );
-
-  const renderDay = useCallback((data: CustomDayProps) => <CustomDay {...data} />, []);
 
   return (
-    <View style={styles.container}>
-      {step === 1 && (
-        <CustomCalendar
-          onNext={onNextStep}
-          markedDate={markedDate}
-          handleDayPress={handleDayPress}
-          _initialDate={_initialDate}
-          handleMonthChange={handleMonthChange}
-          _headerTitle={_headerTitle}
-          renderArrow={renderArrow}
-          renderDay={renderDay}
-        />
-      )}
+    <SafeAreaView style={{ flex: 1, backgroundColor: "pink" }}>
+      <View style={{ height: 100 }} />
+      <Pressable
+        style={{
+          paddingHorizontal: 20,
+          paddingVertical: 10,
+          borderWidth: 1,
+          marginHorizontal: 20,
+        }}
+        onPress={toggleCalendarModal}
+        onLayout={(e) => {
+          console.log(e.nativeEvent.layout, "onLayout");
+          setPaddingTop(e.nativeEvent.layout.y + 10);
+        }}
+        ref={buttonRef}
+      >
+        <Text style={{ fontSize: 20 }}>Open Calendar</Text>
+      </Pressable>
 
-      {step === 2 && (
-        <Month
-          onNext={onNextStep}
-          onBack={onPrevStep}
-          currentDate={date}
-          updateMonth={_updateMonth}
-          updateYear={_updateYear}
-        />
-      )}
+      <Modal
+        transparent
+        animationType="fade"
+        visible={showCalendarModal}
+        onRequestClose={hideCalendarModal}
+        accessible={showCalendarModal}
+      >
+        <TouchableWithoutFeedback
+          onPress={hideCalendarModal}
+          accessible={showCalendarModal}
+        >
+          <View
+            style={{
+              paddingTop,
+              flex: 1,
+              backgroundColor: "rgba(0,0,0,0.0)",
+            }}
+          >
+            <TouchableWithoutFeedback>
+              <Animated.View style={[styles.parentView]} entering={SlideInUp}>
+                <Animated.View style={[styles.animatedBox, animatedStyle]}>
+                  <Animated.View
+                    style={styles.animatedView}
+                    key={`step_${index}`}
+                    entering={FadeIn.duration(100)}
+                    // exiting={FadeOut.duration(100)}
+                    ref={containerRef}
+                    onLayout={(e) => {
+                      const measuredHeight = e.nativeEvent.layout.height;
+                      // console.log(
+                      //   "🚀🚀🚀 ~ TabOneScreen ~ measuredHeight:",
+                      //   measuredHeight
+                      // );
+                      animatedHeight.value = measuredHeight;
+                    }}
+                    // layout={LinearTransition.springify().damping(900).stiffness(500)}
+                  >
+                    {index === 0 && <Step1 onNext={onNext} onBack={onBack} />}
+                    {index === 1 && <Step2 onNext={onNext} onBack={onBack} />}
+                    {index === 2 && <Step3 onNext={onNext} onBack={onBack} />}
+                    {index === 3 && <Month onNext={onNext} onBack={onBack} />}
+                    {index === 4 && <Year onNext={onNext} onBack={onBack} />}
+                  </Animated.View>
+                </Animated.View>
+              </Animated.View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
 
-      {step === 3 && (
-        <Year onBack={onPrevStep} updateYear={_updateYear} currentDate={date} />
-      )}
-    </View>
+      {/* <Animated.View style={[styles.parentView]}>
+        <Animated.View style={[styles.animatedBox, animatedStyle]}>
+          <Animated.View
+            style={styles.animatedView}
+            key={`step_${index}`}
+            entering={FadeIn}
+            exiting={FadeOut}
+            onLayout={(e) => {
+              const measuredHeight = e.nativeEvent.layout.height;
+              console.log("🚀🚀🚀 ~ TabOneScreen ~ measuredHeight:", measuredHeight);
+              height.value = measuredHeight;
+            }}
+          >
+            {index === 0 && <Step1 onNext={onNext} onBack={onBack} />}
+            {index === 1 && <Step2 onNext={onNext} onBack={onBack} />}
+            {index === 2 && <Step3 onNext={onNext} onBack={onBack} />}
+          </Animated.View>
+        </Animated.View>
+      </Animated.View> */}
+
+      <Text>Lorem Ipsum</Text>
+      <Text>Lorem Ipsum</Text>
+      <Text>Lorem Ipsum</Text>
+      <Text>Lorem Ipsum</Text>
+      <Text>Lorem Ipsum</Text>
+    </SafeAreaView>
   );
 }
 
-type CustomCalendarProps = {
-  markedDate: MarkedDates | undefined;
-  handleDayPress: (data: DateData) => void;
-  _initialDate: string;
-  handleMonthChange: (data: DateData) => void;
-  _headerTitle: string;
-  onNext: () => void;
-  renderArrow: (direction: Direction) => JSX.Element;
-  renderDay: (data: CustomDayProps) => JSX.Element;
-};
-
-const CustomCalendar = ({
-  markedDate,
-  handleDayPress,
-  _initialDate,
-  handleMonthChange,
-  _headerTitle,
-  onNext,
-  renderArrow,
-  renderDay,
-}: CustomCalendarProps) => {
-  const customTheme: Theme = {
-    arrowStyle: {
-      backgroundColor: "#F2F2F5",
-      padding: 9,
-    },
-    "stylesheet.calendar.main": {
-      container: {
-        padding: 20,
-        backgroundColor: "white",
-        borderRadius: 8,
-      },
-    },
-    "stylesheet.calendar.header": {
-      header: {
-        paddingLeft: 0,
-        paddingRight: 0,
-        marginTop: 0,
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-      },
-    },
-  };
-
-  return (
-    <>
-      <Calendar
-        enableSwipeMonths
-        hideExtraDays
-        markedDates={markedDate}
-        onDayPress={handleDayPress}
-        initialDate={_initialDate}
-        renderArrow={renderArrow}
-        onMonthChange={(data) => handleMonthChange(data)}
-        dayComponent={renderDay}
-        customHeaderTitle={<Title title={_headerTitle} onNext={onNext} />}
-        disableAllTouchEventsForDisabledDays
-        testID="CustomCalendar"
-        theme={customTheme}
-      />
-    </>
-  );
-};
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "green",
-    padding: 20,
-    paddingTop: 200,
+  parentView: {
+    justifyContent: "flex-end",
+    paddingHorizontal: 20,
+    // backgroundColor: "black",
+  },
+  animatedBox: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    width: "100%",
+    overflow: "hidden",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  animatedView: {
+    position: "absolute",
     width: "100%",
   },
-  customHeaderTitle: {},
 });
