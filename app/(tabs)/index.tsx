@@ -1,5 +1,5 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
-import { useCallback, useEffect, useMemo, useRef, useState, type JSX } from "react";
+import { StyleSheet, View } from "react-native";
+import { useCallback, useMemo, useState, type JSX } from "react";
 import { Calendar, type DateData } from "react-native-calendars";
 import type { Direction, MarkedDates, Theme } from "react-native-calendars/src/types";
 
@@ -8,7 +8,6 @@ import CustomDay, { type CustomDayProps } from "@/components/calendar/day";
 import Title from "@/components/calendar/title";
 import Month from "@/components/steps/Month";
 import Year from "@/components/steps/Year";
-import type { BasicDayProps } from "react-native-calendars/src/calendar/day/basic";
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const XDate = require("xdate");
@@ -126,7 +125,7 @@ const customTheme: Theme = {
       borderRadius: 8,
     },
     week: {
-      marginTop: 10,
+      marginTop: 10 * 1.5,
       gap: 10,
       flexDirection: "row",
       justifyContent: "space-around",
@@ -135,7 +134,6 @@ const customTheme: Theme = {
   "stylesheet.calendar.header": {
     header: {
       // paddingHorizontal: 8,
-      marginTop: 0,
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
@@ -150,7 +148,7 @@ const customTheme: Theme = {
       marginTop: 2,
       flex: 1,
       textAlign: "center",
-      fontSize: 12,
+      fontSize: 15,
       fontFamily: "Lato",
       fontWeight: 700,
       color: "#5A5A5A",

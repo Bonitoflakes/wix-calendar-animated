@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   yearButtonActive: {
-    backgroundColor: "blue",
+    backgroundColor: "#0466C833",
   },
   yearButtonDisabled: {
     backgroundColor: "#f5f5f5",
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     color: "#222",
   },
   yearTextActive: {
-    color: "#fff",
+    color: "#0466C8",
   },
   yearTextDisabled: {
     color: "#aaa",
