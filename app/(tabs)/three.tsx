@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useCallback, useEffect, useMemo, useRef, useState, type JSX } from "react";
 import { Calendar, type DateData } from "react-native-calendars";
-import type { Direction, MarkedDates } from "react-native-calendars/src/types";
+import type { Direction, MarkedDates, Theme } from "react-native-calendars/src/types";
 
 import CustomArrow from "@/components/calendar/arrows";
 import CustomDay, { type CustomDayProps } from "@/components/calendar/day";
@@ -128,6 +128,30 @@ const CustomCalendar = ({
   renderArrow,
   renderDay,
 }: CustomCalendarProps) => {
+  const customTheme: Theme = {
+    arrowStyle: {
+      backgroundColor: "#F2F2F5",
+      padding: 9,
+    },
+    "stylesheet.calendar.main": {
+      container: {
+        padding: 20,
+        backgroundColor: "white",
+        borderRadius: 8,
+      },
+    },
+    "stylesheet.calendar.header": {
+      header: {
+        paddingLeft: 0,
+        paddingRight: 0,
+        marginTop: 0,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+      },
+    },
+  };
+
   return (
     <>
       <Calendar
@@ -141,6 +165,8 @@ const CustomCalendar = ({
         dayComponent={renderDay}
         customHeaderTitle={<Title title={_headerTitle} onNext={onNext} />}
         disableAllTouchEventsForDisabledDays
+        testID="CustomCalendar"
+        theme={customTheme}
       />
     </>
   );
