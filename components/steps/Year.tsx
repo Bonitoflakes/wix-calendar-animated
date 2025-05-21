@@ -3,32 +3,29 @@ import React, { useState, useMemo } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 type Props = {
-  onBack: () => void;
   onNext: () => void;
   onSelectYear?: (year: number) => void;
-  disabledFromYear?: number; // years >= this will be disabled
-  initialYear?: number; // optional, to scroll to a specific year
-  yearsPerPage?: number; // optional, default 12
+  disabledFromYear?: number;
+  initialYear?: number;
+  yearsPerPage?: number;
 };
 
 const START_YEAR = 1970;
-const END_YEAR = 2101;
+const END_YEAR = 2100;
 
 const Year: React.FC<Props> = ({
-  onBack,
   onNext,
   onSelectYear,
   disabledFromYear,
   initialYear,
   yearsPerPage = 12,
 }) => {
-  const totalYears = END_YEAR - START_YEAR;
-
+  const totalYears = END_YEAR - START_YEAR + 1;
   const totalPages = Math.ceil(totalYears / yearsPerPage);
 
   const initialPage = initialYear
     ? Math.floor((initialYear - START_YEAR) / yearsPerPage)
-    : totalPages;
+    : 0;
 
   const [page, setPage] = useState(initialPage);
 
@@ -40,6 +37,14 @@ const Year: React.FC<Props> = ({
 
   const handlePrev = () => setPage((p) => Math.max(0, p - 1));
   const handleNext = () => setPage((p) => Math.min(totalPages - 1, p + 1));
+
+  const handleYearSelect = (year: number) => {
+    if (disabledFromYear !== undefined && year >= disabledFromYear) {
+      return;
+    }
+    onSelectYear?.(year);
+    onNext();
+  };
 
   return (
     <View>
@@ -63,33 +68,26 @@ const Year: React.FC<Props> = ({
           />
         </Pressable>
       </View>
-      <FlatList
-        data={years}
-        keyExtractor={(item) => item.toString()}
-        numColumns={4}
-        contentContainerStyle={styles.yearsGrid}
-        renderItem={({ item }) => {
-          const disabled = disabledFromYear !== undefined && item >= disabledFromYear;
-          return (
-            <Pressable
-              style={[styles.yearButton, disabled && styles.yearButtonDisabled]}
-              onPress={() => !disabled && onSelectYear?.(item)}
-              disabled={disabled}
-            >
-              <Text style={[styles.yearText, disabled && styles.yearTextDisabled]}>
-                {item}
-              </Text>
-            </Pressable>
-          );
-        }}
-      />
-      <View style={styles.footerRow}>
-        <Pressable onPress={onBack} style={styles.button}>
-          <Text style={styles.buttonText}>Cancel</Text>
-        </Pressable>
-        <Pressable onPress={onNext} style={styles.button}>
-          <Text style={styles.buttonText}>Next</Text>
-        </Pressable>
+
+      {/* Year Grid */}
+      <View style={styles.gridContainer}>
+        <FlatList
+          data={years}
+          keyExtractor={(item) => item.toString()}
+          numColumns={4}
+          renderItem={({ item }) => {
+            const disabled = disabledFromYear !== undefined && item >= disabledFromYear;
+            const isActive = initialYear === item;
+            return (
+              <YearItem
+                item={item}
+                handleYearSelect={handleYearSelect}
+                disabled={disabled}
+                isActive={isActive}
+              />
+            );
+          }}
+        />
       </View>
     </View>
   );
@@ -120,18 +118,23 @@ const styles = StyleSheet.create({
     minWidth: 90,
     textAlign: "center",
   },
-  yearsGrid: {
-    alignItems: "center",
-    marginBottom: 24,
+  gridContainer: {
+    padding: 12,
+    backgroundColor: "#fff",
+  },
+  yearItemContainer: {
+    width: "25%", // 4 columns
+    padding: 6, // This creates the gap effect (12px total between items)
   },
   yearButton: {
     backgroundColor: "#ececec",
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 16,
-    margin: 6,
-    minWidth: 60,
     alignItems: "center",
+  },
+  activeYearButton: {
+    backgroundColor: "blue",
   },
   yearButtonDisabled: {
     backgroundColor: "#f5f5f5",
@@ -163,3 +166,33 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+
+type YearItemProps = {
+  item: number;
+  handleYearSelect: (year: number) => void;
+  disabled: boolean;
+  isActive: boolean;
+};
+
+const YearItem: React.FC<YearItemProps> = ({
+  item,
+  handleYearSelect,
+  disabled,
+  isActive,
+}) => {
+  return (
+    <View style={styles.yearItemContainer}>
+      <Pressable
+        style={[
+          styles.yearButton,
+          disabled && styles.yearButtonDisabled,
+          isActive && styles.activeYearButton,
+        ]}
+        onPress={() => !disabled && handleYearSelect(item)}
+        disabled={disabled}
+      >
+        <Text style={[styles.yearText, disabled && styles.yearTextDisabled]}>{item}</Text>
+      </Pressable>
+    </View>
+  );
+};

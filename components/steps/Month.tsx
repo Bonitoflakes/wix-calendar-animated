@@ -48,27 +48,16 @@ const Month: React.FC<Props> = ({
   };
 
   return (
-    <View style={{ backgroundColor: "white", width: "100%" }}>
+    <View style={[styles.container]}>
       {/* Month Header */}
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: 20,
-          gap: 20,
-          width: "100%",
-        }}
-      >
+      <View style={[styles.headerContainer]}>
         <Pressable onPress={goToPrevYear}>
           <Ionicons name="arrow-back" size={24} color="black" />
         </Pressable>
 
         <Pressable
           hitSlop={{ bottom: 10, left: 20, right: 20, top: 10 }}
-          onPress={() => {
-            console.log("Log on Press year modal");
-          }}
+          onPress={() => onNext()}
           accessibilityLabel="year-header"
         >
           <Text>{currentDate.getFullYear()}</Text>
@@ -80,43 +69,19 @@ const Month: React.FC<Props> = ({
       </View>
 
       {/* Month Body */}
-      <View
-        style={{
-          flexDirection: "row",
-          flexWrap: "wrap",
-          padding: 20,
-          gap: 20,
-          backgroundColor: "pink",
-          justifyContent: "space-evenly",
-        }}
-      >
+      <View style={[styles.bodyContainer]}>
         {_MONTHS.map((month, idx) => (
           <Pressable
             key={idx}
             onPress={() => {
               updateMonth(idx);
+              onBack();
             }}
-            style={{
-              minWidth: 100,
-              alignItems: "center",
-              padding: 10,
-              borderRadius: 12,
-              backgroundColor: currentMonth === idx ? "blue" : "#ececec",
-            }}
+            style={[styles.monthButton, currentMonth === idx && styles.activeMonthButton]}
           >
             <Text>{month}</Text>
           </Pressable>
         ))}
-      </View>
-
-      <View style={{ marginTop: 100, padding: 20, flexDirection: "row", gap: 20 }}>
-        <Pressable onPress={onBack} style={styles.button}>
-          <Text style={styles.buttonText}>Cancel</Text>
-        </Pressable>
-
-        <Pressable onPress={onNext} style={[styles.button, { backgroundColor: "pink" }]}>
-          <Text style={styles.buttonText}>Next</Text>
-        </Pressable>
       </View>
     </View>
   );
@@ -125,18 +90,31 @@ const Month: React.FC<Props> = ({
 export default Month;
 
 const styles = StyleSheet.create({
-  button: {
-    backgroundColor: "#ececec",
-    height: 48,
-    borderRadius: 12,
+  container: { backgroundColor: "white", width: "100%" },
+  headerContainer: {
+    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 12,
-    gap: 8,
-    marginVertical: 20,
-    flex: 1,
+    justifyContent: "space-between",
+    padding: 20,
+    gap: 20,
+    width: "100%",
   },
-  buttonText: {
-    fontSize: 16,
+  bodyContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    padding: 20,
+    gap: 20,
+    backgroundColor: "pink",
+    justifyContent: "space-evenly",
+  },
+  monthButton: {
+    minWidth: 100,
+    alignItems: "center",
+    padding: 10,
+    borderRadius: 12,
+    backgroundColor: "#ececec",
+  },
+  activeMonthButton: {
+    backgroundColor: "blue",
   },
 });
