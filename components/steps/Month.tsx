@@ -52,7 +52,7 @@ const Month: React.FC<Props> = ({
       {/* Month Header */}
       <View style={[styles.headerContainer]}>
         <Pressable onPress={goToPrevYear} style={styles.headerArrow}>
-          <Ionicons name="arrow-back" size={24} color="black" />
+          <Ionicons name="arrow-back" size={22} color="black" />
         </Pressable>
 
         <Pressable
@@ -64,7 +64,7 @@ const Month: React.FC<Props> = ({
         </Pressable>
 
         <Pressable onPress={goToNextYear} style={styles.headerArrow}>
-          <Ionicons name="arrow-forward" size={24} color="black" />
+          <Ionicons name="arrow-forward" size={22} color="black" />
         </Pressable>
       </View>
 

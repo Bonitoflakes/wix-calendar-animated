@@ -8,7 +8,7 @@ export type CustomDayProps = BasicDayProps & {
 };
 
 const CustomDay = (props: CustomDayProps) => {
-//   console.log("🚀🚀🚀 ~ CustomDay ~ props:", props);
+  //   console.log("🚀🚀🚀 ~ CustomDay ~ props:", props);
 
   const { state, marking, date, onPress, accessibilityLabel, testID } = props;
 
@@ -34,8 +34,8 @@ export default React.memo(CustomDay);
 const styles = StyleSheet.create({
   container: {
     display: "flex",
-    width: 36,
-    height: 36,
+    width: "100%",
+    aspectRatio: 1,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 4,
