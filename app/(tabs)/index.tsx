@@ -1,5 +1,5 @@
 import { StyleSheet, View } from "react-native";
-import { useCallback, useMemo, useState, type JSX } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Calendar, type DateData } from "react-native-calendars";
 import type { Direction, MarkedDates, Theme } from "react-native-calendars/src/types";
 
@@ -49,7 +49,8 @@ export default function TabThreeScreen() {
 
   const _updateMonth = useCallback(
     (month: number) => {
-      if (month < 0 || month > 11) throw new Error("Invalid month");
+      if (month < 0 || month > 11) return;
+
       const newDate = new XDate(date);
       newDate.setMonth(month);
       setDate(newDate);
@@ -59,7 +60,8 @@ export default function TabThreeScreen() {
 
   const _updateYear = useCallback(
     (year: number) => {
-      if (year < 1970 || year > 2100) throw new Error("Invalid year");
+      if (year < 1970 || year > 2100) return;
+
       const newDate = new XDate(date);
       newDate.setFullYear(year);
       setDate(newDate);
@@ -77,15 +79,19 @@ export default function TabThreeScreen() {
   return (
     <View style={styles.container}>
       {step === 1 && (
-        <CustomCalendar
-          onNext={onNextStep}
-          markedDate={markedDate}
-          handleDayPress={handleDayPress}
-          _initialDate={_initialDate}
-          handleMonthChange={handleMonthChange}
-          _headerTitle={_headerTitle}
+        <Calendar
+          enableSwipeMonths
+          hideExtraDays
+          markedDates={markedDate}
+          onDayPress={handleDayPress}
+          initialDate={_initialDate}
           renderArrow={renderArrow}
-          renderDay={renderDay}
+          onMonthChange={handleMonthChange}
+          dayComponent={renderDay}
+          customHeaderTitle={<Title title={_headerTitle} onNext={onNextStep} />}
+          disableAllTouchEventsForDisabledDays
+          testID="CustomCalendar"
+          theme={customTheme}
         />
       )}
 
@@ -106,18 +112,8 @@ export default function TabThreeScreen() {
   );
 }
 
-type CustomCalendarProps = {
-  markedDate: MarkedDates | undefined;
-  handleDayPress: (data: DateData) => void;
-  _initialDate: string;
-  handleMonthChange: (data: DateData) => void;
-  _headerTitle: string;
-  onNext: () => void;
-  renderArrow: (direction: Direction) => JSX.Element;
-  renderDay: (data: CustomDayProps) => JSX.Element;
-};
-
 const customTheme: Theme = {
+  // @ts-expect-error
   "stylesheet.calendar.main": {
     container: {
       padding: 20,
@@ -165,36 +161,6 @@ const customTheme: Theme = {
     alignItems: "center",
     justifyContent: "center",
   },
-};
-
-const CustomCalendar = ({
-  markedDate,
-  handleDayPress,
-  _initialDate,
-  handleMonthChange,
-  _headerTitle,
-  onNext,
-  renderArrow,
-  renderDay,
-}: CustomCalendarProps) => {
-  return (
-    <>
-      <Calendar
-        enableSwipeMonths
-        hideExtraDays
-        markedDates={markedDate}
-        onDayPress={handleDayPress}
-        initialDate={_initialDate}
-        renderArrow={renderArrow}
-        onMonthChange={(data) => handleMonthChange(data)}
-        dayComponent={renderDay}
-        customHeaderTitle={<Title title={_headerTitle} onNext={onNext} />}
-        disableAllTouchEventsForDisabledDays
-        testID="CustomCalendar"
-        theme={customTheme}
-      />
-    </>
-  );
 };
 
 const styles = StyleSheet.create({
