@@ -45,7 +45,7 @@ export const Trigger: FC<{
 export const Modal: FC<{
   children: ReactNode;
 }> = ({ children }) => {
-  const { isOpen, toggleIsOpen, paddingTop } = useCalendar();
+  const { isOpen, toggleIsOpen } = useCalendar();
   return (
     <RNModal
       visible={isOpen}
@@ -58,10 +58,11 @@ export const Modal: FC<{
         <View
           style={{
             padding: 20,
-            paddingTop: paddingTop + 60,
+            // paddingTop: paddingTop + 60,
             flex: 1,
             width: "100%",
             backgroundColor: "0 2px 8px rgba(0, 0, 0, 0.5)",
+            justifyContent: "center",
           }}
         >
           <TouchableWithoutFeedback>{children}</TouchableWithoutFeedback>
