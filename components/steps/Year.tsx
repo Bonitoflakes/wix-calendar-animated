@@ -1,9 +1,9 @@
-import { View, Text, Pressable, StyleSheet, FlatList } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import React, { useState, useMemo } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 type Props = {
-  onBack: () => void;
+  decrementStep: () => void;
   updateYear: (year: number) => void;
   disabledFromYear?: number;
   currentDate: XDate;
@@ -14,7 +14,7 @@ const START_YEAR = 1970;
 const END_YEAR = 2100;
 
 const Year: React.FC<Props> = ({
-  onBack,
+  decrementStep,
   updateYear,
   currentDate,
   disabledFromYear,
@@ -59,7 +59,7 @@ const Year: React.FC<Props> = ({
       return;
     }
     updateYear(year);
-    onBack();
+    decrementStep();
   };
 
   const validYears = years.filter((y) => y !== null);

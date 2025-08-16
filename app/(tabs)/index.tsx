@@ -6,7 +6,7 @@ import type { Direction, MarkedDates, Theme } from "react-native-calendars/src/t
 import CustomArrow from "@/components/calendar/arrows";
 import CustomDay, { type CustomDayProps } from "@/components/calendar/day";
 import Title from "@/components/calendar/title";
-import Month from "@/components/steps/Month";
+import { Month } from "@/components/steps/Month";
 import Year from "@/components/steps/Year";
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -33,8 +33,14 @@ export default function TabThreeScreen() {
       : {};
   }, [selectedDate]);
 
-  const onNextStep = () => setStep((p) => Math.min(p + 1, _MAX_STEPS));
-  const onPrevStep = () => setStep((p) => Math.max(p - 1, _MIN_STEPS));
+  const incrementStep = useCallback(
+    () => setStep((p) => Math.min(p + 1, _MAX_STEPS)),
+    []
+  );
+  const decrementStep = useCallback(
+    () => setStep((p) => Math.max(p - 1, _MIN_STEPS)),
+    []
+  );
 
   const handleMonthChange = useCallback((data: DateData) => {
     const dateString = data.dateString;
@@ -47,27 +53,25 @@ export default function TabThreeScreen() {
     console.log("~ Selected date:", dateString);
   }, []);
 
-  const _updateMonth = useCallback(
-    (month: number) => {
-      if (month < 0 || month > 11) return;
+  const _updateMonth = useCallback((month: number) => {
+    if (month < 0 || month > 11) return;
 
-      const newDate = new XDate(date);
+    setDate((prevDate) => {
+      const newDate = new XDate(prevDate);
       newDate.setMonth(month);
-      setDate(newDate);
-    },
-    [date]
-  );
+      return newDate;
+    });
+  }, []);
 
-  const _updateYear = useCallback(
-    (year: number) => {
-      if (year < 1970 || year > 2100) return;
+  const _updateYear = useCallback((year: number) => {
+    if (year < 1970 || year > 2100) return;
 
-      const newDate = new XDate(date);
+    setDate((prevDate) => {
+      const newDate = new XDate(prevDate);
       newDate.setFullYear(year);
-      setDate(newDate);
-    },
-    [date]
-  );
+      return newDate;
+    });
+  }, []);
 
   const renderArrow = useCallback(
     (direction: Direction) => <CustomArrow direction={direction} />,
@@ -88,7 +92,7 @@ export default function TabThreeScreen() {
           renderArrow={renderArrow}
           onMonthChange={handleMonthChange}
           dayComponent={renderDay}
-          customHeaderTitle={<Title title={_headerTitle} onNext={onNextStep} />}
+          customHeaderTitle={<Title title={_headerTitle} incrementStep={incrementStep} />}
           disableAllTouchEventsForDisabledDays
           testID="CustomCalendar"
           theme={customTheme}
@@ -97,8 +101,8 @@ export default function TabThreeScreen() {
 
       {step === 2 && (
         <Month
-          onNext={onNextStep}
-          onBack={onPrevStep}
+          incrementStep={incrementStep}
+          decrementStep={decrementStep}
           currentDate={date}
           updateMonth={_updateMonth}
           updateYear={_updateYear}
@@ -106,7 +110,7 @@ export default function TabThreeScreen() {
       )}
 
       {step === 3 && (
-        <Year onBack={onPrevStep} updateYear={_updateYear} currentDate={date} />
+        <Year decrementStep={decrementStep} updateYear={_updateYear} currentDate={date} />
       )}
     </View>
   );

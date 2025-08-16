@@ -1,7 +1,8 @@
+/* eslint-disable react/display-name */
 import { View, Text, Pressable, StyleSheet } from "react-native";
-import React from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import XDate from "xdate";
+import { memo, useCallback, useMemo } from "react";
 
 const _MONTHS = [
   "January",
@@ -18,81 +19,120 @@ const _MONTHS = [
   "December",
 ];
 
-type Props = {
-  onBack: () => void;
-  onNext: () => void;
+type MonthProps = {
+  decrementStep: () => void;
+  incrementStep: () => void;
   updateMonth: (month: number) => void;
   updateYear: (year: number) => void;
   currentDate: XDate;
 };
 
-const Month: React.FC<Props> = ({
-  onBack,
-  onNext,
+type MonthHeaderProps = {
+  currentYear: number;
+  goToNextYear: () => void;
+  goToPrevYear: () => void;
+  incrementStep: () => void;
+};
+
+type MonthGridProps = {
+  currentMonth: number;
+  updateMonth: (month: number) => void;
+  decrementStep: () => void;
+};
+
+export const Month: React.FC<MonthProps> = ({
+  decrementStep,
+  incrementStep,
   updateMonth,
   updateYear,
   currentDate,
 }) => {
   const currentMonth = currentDate.getMonth();
 
-  const goToPrevYear = () => {
+  const goToPrevYear = useCallback(() => {
     const newDate = new XDate(currentDate);
     newDate.setFullYear(currentDate.getFullYear() - 1);
     updateYear(newDate.getFullYear());
-  };
+  }, [currentDate, updateYear]);
 
-  const goToNextYear = () => {
+  const goToNextYear = useCallback(() => {
     const newDate = new XDate(currentDate);
     newDate.setFullYear(currentDate.getFullYear() + 1);
     updateYear(newDate.getFullYear());
-  };
+  }, [currentDate, updateYear]);
 
   return (
     <View style={[styles.container]}>
-      {/* Month Header */}
-      <View style={[styles.headerContainer]}>
-        <Pressable onPress={goToPrevYear} style={styles.headerArrow}>
-          <Ionicons name="arrow-back" size={22} color="black" />
-        </Pressable>
+      <MonthHeader
+        currentYear={currentDate.getFullYear()}
+        goToNextYear={goToNextYear}
+        goToPrevYear={goToPrevYear}
+        incrementStep={incrementStep}
+      />
 
-        <Pressable
-          hitSlop={{ bottom: 10, left: 20, right: 20, top: 10 }}
-          onPress={() => onNext()}
-          accessibilityLabel="year-header"
-        >
-          <Text style={styles.headerTitle}>{currentDate.getFullYear()}</Text>
-        </Pressable>
-
-        <Pressable onPress={goToNextYear} style={styles.headerArrow}>
-          <Ionicons name="arrow-forward" size={22} color="black" />
-        </Pressable>
-      </View>
-
-      {/* Month Body */}
-      <View style={[styles.bodyContainer]}>
-        {_MONTHS.map((month, idx) => {
-          const isActive = currentMonth === idx;
-          return (
-            <Pressable
-              key={idx}
-              onPress={() => {
-                updateMonth(idx);
-                onBack();
-              }}
-              style={[styles.monthButton, isActive && styles.activeMonthButton]}
-            >
-              <Text style={[styles.monthText, isActive && styles.activeMonthText]}>
-                {month}
-              </Text>
-            </Pressable>
-          );
-        })}
-      </View>
+      <MonthGrid
+        currentMonth={currentMonth}
+        updateMonth={updateMonth}
+        decrementStep={decrementStep}
+      />
     </View>
   );
 };
 
-export default Month;
+const MonthHeader = ({
+  currentYear,
+  goToNextYear,
+  goToPrevYear,
+  incrementStep,
+}: MonthHeaderProps) => {
+  return (
+    <View style={[styles.headerContainer]}>
+      <Pressable onPress={goToPrevYear} style={styles.headerArrow}>
+        <Ionicons name="arrow-back" size={22} color="black" />
+      </Pressable>
+
+      <Pressable
+        hitSlop={{ bottom: 10, left: 20, right: 20, top: 10 }}
+        onPress={incrementStep}
+        accessibilityLabel="year-header"
+      >
+        <Text style={styles.headerTitle}>{currentYear}</Text>
+      </Pressable>
+
+      <Pressable onPress={goToNextYear} style={styles.headerArrow}>
+        <Ionicons name="arrow-forward" size={22} color="black" />
+      </Pressable>
+    </View>
+  );
+};
+
+const MonthGrid = memo(function MonthGrid({
+  currentMonth,
+  updateMonth,
+  decrementStep,
+}: MonthGridProps) {
+  return (
+    <View style={[styles.bodyContainer]}>
+      {_MONTHS.map((month, idx) => {
+        const isActive = currentMonth === idx;
+        return (
+          <Pressable
+            key={idx}
+            onPress={() => {
+              updateMonth(idx);
+              decrementStep();
+            }}
+            style={[styles.monthButton, isActive && styles.activeMonthButton]}
+          >
+            <Text style={[styles.monthText, isActive && styles.activeMonthText]}>
+              {month}
+            </Text>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+});
 
 const styles = StyleSheet.create({
   container: { padding: 20, backgroundColor: "white", borderRadius: 8 },

@@ -33,7 +33,7 @@
     "plugins": ["expo-router", "expo-dev-client"],
     "experiments": {
       "typedRoutes": true,
-      "reactCompiler": true
+      "reactCompiler": false
     }
   }
 }

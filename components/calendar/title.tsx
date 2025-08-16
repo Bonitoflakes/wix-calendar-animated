@@ -1,9 +1,9 @@
 import React from "react";
 import { Pressable, Text, StyleSheet, View } from "react-native";
 
-const Title = ({ title, onNext }: { title: string; onNext: () => void }) => {
+const Title = ({ title, incrementStep }: { title: string; incrementStep: () => void }) => {
   return (
-    <Pressable onPress={onNext}>
+    <Pressable onPress={incrementStep}>
       <View style={styles.container}>
         <Text style={styles.title}>{title}</Text>
       </View>
