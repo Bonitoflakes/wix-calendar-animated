@@ -1,10 +1,10 @@
 import {
   StyleSheet,
   View,
-  Button,
   Text,
   Modal,
   TouchableWithoutFeedback,
+  Pressable,
 } from "react-native";
 import { useState } from "react";
 
@@ -15,6 +15,7 @@ import { MyCalendar } from "@/packages/calendar";
 
 export default function TabFourScreen() {
   const [isVisible, setIsVisible] = useState(false);
+  const [paddingTop, setPaddingTop] = useState(0);
 
   const toggleVisibility = () => setIsVisible((prev) => !prev);
 
@@ -37,14 +38,28 @@ export default function TabFourScreen() {
           paddingTop: 200,
         }}
       >
-        <Button onPress={showModal} title="trigger" />
+        <Pressable
+          style={{
+            paddingHorizontal: 20,
+            paddingVertical: 10,
+            borderWidth: 1,
+            width: "100%",
+          }}
+          onPress={showModal}
+          onLayout={(e) => {
+            console.log(e.nativeEvent.layout, "onLayout");
+            setPaddingTop(e.nativeEvent.layout.y);
+          }}
+        >
+          <Text style={{ fontSize: 20 }}>Trigger</Text>
+        </Pressable>
+
         <DateIndicator />
         <Text>
           Lot of gibberish Lot of gibberishLot of gibberishLot of gibberishLot of
           gibberish Lot of gibberish Lot of gibberish Lot of gibberish Lot of gibberish
           Lot of gibberish
         </Text>
-
         <Modal
           visible={isVisible}
           transparent
@@ -55,9 +70,10 @@ export default function TabFourScreen() {
             <View
               style={{
                 padding: 20,
+                paddingTop,
                 flex: 1,
                 width: "100%",
-                backgroundColor: "rgba(0,0,0,0.3)",
+                // backgroundColor: "rgba(0,0,0,0.3)",
               }}
             >
               <Shell closeModal={closeModal} />
@@ -73,7 +89,7 @@ const DateIndicator = () => {
   const { selectedDate } = useCalendarContext();
   return (
     <View>
-      <Text>Selected Date: {selectedDate?.toString('dd-MM-yyyy')}</Text>
+      <Text>Selected Date: {selectedDate?.toString("dd-MM-yyyy")}</Text>
     </View>
   );
 };
@@ -93,9 +109,11 @@ const Shell = ({ closeModal }: { closeModal: () => void }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "green",
-    padding: 20,
+    // backgroundColor: "green",
+    // padding: 20,
+    borderRadius: 8,
     width: "100%",
+    boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
   },
   customHeaderTitle: {},
 });
