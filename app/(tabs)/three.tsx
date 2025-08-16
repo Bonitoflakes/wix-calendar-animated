@@ -27,8 +27,8 @@ import Animated, {
 import Step1 from "@/components/steps/Step1";
 import Step2 from "@/components/steps/Step2";
 import Step3 from "@/components/steps/Step3";
-import Month from "@/components/steps/Month";
-import Year from "@/components/steps/Year";
+import Month from "@/components/month";
+import Year from "@/components/year";
 
 const ANIMATION_EASING: EasingFunction = Easing.out(Easing.exp);
 const ANIMATION_DURATION = 500;

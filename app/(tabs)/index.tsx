@@ -1,29 +1,67 @@
 import { StyleSheet, View } from "react-native";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { Calendar, type DateData } from "react-native-calendars";
 import type { Direction, MarkedDates, Theme } from "react-native-calendars/src/types";
 
 import CustomArrow from "@/components/calendar/arrows";
 import CustomDay, { type CustomDayProps } from "@/components/calendar/day";
 import Title from "@/components/calendar/title";
-import { Month } from "@/components/steps/Month";
-import Year from "@/components/steps/Year";
+import { MonthWrapper } from "@/components/month";
+import Year from "@/components/year";
+import { CalendarProvider, useCalendarContext } from "@/components/calendarContext";
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const XDate = require("xdate");
 
-const today: XDate = new XDate();
-
-const _MAX_STEPS = 3;
-const _MIN_STEPS = 1;
-
 export default function TabThreeScreen() {
-  const [step, setStep] = useState(1);
-  const [date, setDate] = useState(today);
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  return (
+    <CalendarProvider>
+      <Shell />
+    </CalendarProvider>
+  );
+}
+
+const Shell = () => {
+  const { step } = useCalendarContext();
+  return (
+    <View style={styles.container}>
+      {step === 1 && <MyCalendar />}
+      {step === 2 && <MonthWrapper />}
+      {step === 3 && <Year />}
+    </View>
+  );
+};
+
+const MyCalendar = () => {
+  const { incrementStep, date, setDate, setSelectedDate, selectedDate } =
+    useCalendarContext();
 
   const _headerTitle = date.toString("MMMM yyyy");
   const _initialDate = date.toString("i").split("T")[0];
+
+  const handleMonthChange = useCallback(
+    (data: DateData) => {
+      const dateString = data.dateString;
+      setDate(new XDate(dateString));
+    },
+    [setDate]
+  );
+
+  const handleDayPress = useCallback(
+    (data: DateData) => {
+      const { dateString } = data;
+      setSelectedDate(dateString);
+      console.log("~ Selected date:", dateString);
+    },
+    [setSelectedDate]
+  );
+
+  const renderArrow = useCallback(
+    (direction: Direction) => <CustomArrow direction={direction} />,
+    []
+  );
+
+  const renderDay = useCallback((data: CustomDayProps) => <CustomDay {...data} />, []);
 
   const markedDate = useMemo<MarkedDates>(() => {
     return selectedDate
@@ -33,88 +71,23 @@ export default function TabThreeScreen() {
       : {};
   }, [selectedDate]);
 
-  const incrementStep = useCallback(
-    () => setStep((p) => Math.min(p + 1, _MAX_STEPS)),
-    []
-  );
-  const decrementStep = useCallback(
-    () => setStep((p) => Math.max(p - 1, _MIN_STEPS)),
-    []
-  );
-
-  const handleMonthChange = useCallback((data: DateData) => {
-    const dateString = data.dateString;
-    setDate(new XDate(dateString));
-  }, []);
-
-  const handleDayPress = useCallback((data: DateData) => {
-    const { dateString } = data;
-    setSelectedDate(dateString);
-    console.log("~ Selected date:", dateString);
-  }, []);
-
-  const _updateMonth = useCallback((month: number) => {
-    if (month < 0 || month > 11) return;
-
-    setDate((prevDate) => {
-      const newDate = new XDate(prevDate);
-      newDate.setMonth(month);
-      return newDate;
-    });
-  }, []);
-
-  const _updateYear = useCallback((year: number) => {
-    if (year < 1970 || year > 2100) return;
-
-    setDate((prevDate) => {
-      const newDate = new XDate(prevDate);
-      newDate.setFullYear(year);
-      return newDate;
-    });
-  }, []);
-
-  const renderArrow = useCallback(
-    (direction: Direction) => <CustomArrow direction={direction} />,
-    []
-  );
-
-  const renderDay = useCallback((data: CustomDayProps) => <CustomDay {...data} />, []);
-
   return (
-    <View style={styles.container}>
-      {step === 1 && (
-        <Calendar
-          enableSwipeMonths
-          hideExtraDays
-          markedDates={markedDate}
-          onDayPress={handleDayPress}
-          initialDate={_initialDate}
-          renderArrow={renderArrow}
-          onMonthChange={handleMonthChange}
-          dayComponent={renderDay}
-          customHeaderTitle={<Title title={_headerTitle} incrementStep={incrementStep} />}
-          disableAllTouchEventsForDisabledDays
-          testID="CustomCalendar"
-          theme={customTheme}
-        />
-      )}
-
-      {step === 2 && (
-        <Month
-          incrementStep={incrementStep}
-          decrementStep={decrementStep}
-          currentDate={date}
-          updateMonth={_updateMonth}
-          updateYear={_updateYear}
-        />
-      )}
-
-      {step === 3 && (
-        <Year decrementStep={decrementStep} updateYear={_updateYear} currentDate={date} />
-      )}
-    </View>
+    <Calendar
+      enableSwipeMonths
+      hideExtraDays
+      markedDates={markedDate}
+      onDayPress={handleDayPress}
+      initialDate={_initialDate}
+      renderArrow={renderArrow}
+      onMonthChange={handleMonthChange}
+      dayComponent={renderDay}
+      customHeaderTitle={<Title title={_headerTitle} incrementStep={incrementStep} />}
+      disableAllTouchEventsForDisabledDays
+      testID="CustomCalendar"
+      theme={customTheme}
+    />
   );
-}
+};
 
 const customTheme: Theme = {
   // @ts-expect-error

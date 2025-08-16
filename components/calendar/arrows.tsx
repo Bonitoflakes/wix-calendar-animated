@@ -8,9 +8,9 @@ type CustomArrowProps = {
 
 const CustomArrow = ({ direction }: CustomArrowProps) => {
   return direction === "left" ? (
-    <Ionicons name="arrow-back" size={22} color="black" />
+    <Ionicons name="arrow-back" size={24} color="black" />
   ) : (
-    <Ionicons name="arrow-forward" size={22} color="black" />
+    <Ionicons name="arrow-forward" size={24} color="black" />
   );
 };
 
