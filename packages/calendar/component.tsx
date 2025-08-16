@@ -51,6 +51,7 @@ export const Modal: FC<{
     <RNModal
       visible={isOpen}
       transparent
+      statusBarTranslucent
       animationType="fade"
       onRequestClose={toggleIsOpen}
     >
@@ -62,10 +63,10 @@ export const Modal: FC<{
         <View
           style={{
             padding: 20,
-            paddingTop: Platform.OS === "ios" ? paddingTop + 40 : paddingTop,
+            paddingTop: paddingTop + 60,
             flex: 1,
             width: "100%",
-            backgroundColor: "0 2px 8px rgba(0, 0, 0, 0.3)",
+            backgroundColor: "0 2px 8px rgba(0, 0, 0, 0.5)",
           }}
         >
           <TouchableWithoutFeedback>{children}</TouchableWithoutFeedback>
