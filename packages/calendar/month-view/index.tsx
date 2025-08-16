@@ -1,13 +1,12 @@
 import { View, StyleSheet } from "react-native";
-import XDate from "xdate";
 import { memo, useCallback } from "react";
-import { useCalendarContext } from "../calendarContext";
+import { useCalendar } from "../calendar-context";
 import { MonthGridWrapper } from "./grid";
 import { MonthHeader } from "./header";
 
 // Separate the context consumption to a wrapper component
-export const MonthWrapper = memo(() => {
-  const { updateYear, date: currentDate } = useCalendarContext();
+export const MonthView = memo(() => {
+  const { updateYear, date: currentDate } = useCalendar();
 
   return <Month currentDate={currentDate} updateYear={updateYear} />;
 });
@@ -45,7 +44,7 @@ const Month = memo(
   }
 );
 
-MonthWrapper.displayName = "MonthWrapper";
+MonthView.displayName = "MonthView";
 Month.displayName = "Month";
 
 const styles = StyleSheet.create({

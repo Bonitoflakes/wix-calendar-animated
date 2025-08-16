@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { View, Pressable, Text, StyleSheet } from "react-native";
-import { useCalendarContext } from "../calendarContext";
+import { useCalendar } from "../calendar-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 type MonthHeaderProps = {
@@ -11,7 +11,7 @@ type MonthHeaderProps = {
 
 export const MonthHeader = memo(
   ({ currentYear, goToNextYear, goToPrevYear }: MonthHeaderProps) => {
-    const { incrementStep } = useCalendarContext();
+    const { incrementStep } = useCalendar();
 
     const START_YEAR = 1970;
     const END_YEAR = 2100;

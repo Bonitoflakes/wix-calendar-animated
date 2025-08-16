@@ -1,9 +1,9 @@
 import React from "react";
 import { Pressable, Text, StyleSheet, View } from "react-native";
-import { useCalendarContext } from "../calendarContext";
+import { useCalendar } from "../calendar-context";
 
 const Header = ({ title }: { title: string }) => {
-  const { incrementStep } = useCalendarContext();
+  const { incrementStep } = useCalendar();
   return (
     <Pressable onPress={incrementStep}>
       <View style={styles.container}>

@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { View, Pressable, Text, StyleSheet } from "react-native";
-import { useCalendarContext } from "../calendarContext";
+import { useCalendar } from "../calendar-context";
 
 const _MONTHS = [
   "January",
@@ -19,7 +19,7 @@ const _MONTHS = [
 
 // Separate context consumption in MonthGrid. This prevents re-renders when something changes in the context as the memo kicks in to compare
 export const MonthGridWrapper = memo(({ currentMonth }: { currentMonth: number }) => {
-  const { updateMonth, decrementStep } = useCalendarContext();
+  const { updateMonth, decrementStep } = useCalendar();
 
   return (
     <MonthGrid
