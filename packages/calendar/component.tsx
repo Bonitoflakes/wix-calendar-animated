@@ -54,11 +54,15 @@ export const Modal: FC<{
       animationType="fade"
       onRequestClose={toggleIsOpen}
     >
-      <TouchableWithoutFeedback onPress={toggleIsOpen}>
+      <TouchableWithoutFeedback
+        onPress={() => {
+          toggleIsOpen();
+        }}
+      >
         <View
           style={{
             padding: 20,
-            paddingTop: Platform.OS === "ios" ? paddingTop + 20 : paddingTop,
+            paddingTop: Platform.OS === "ios" ? paddingTop + 40 : paddingTop,
             flex: 1,
             width: "100%",
             backgroundColor: "0 2px 8px rgba(0, 0, 0, 0.3)",
@@ -77,11 +81,16 @@ export const Content: FC = () => {
   if (!isOpen) return null;
 
   return (
-    <View style={styles.content}>
-      {step === 1 && <DayView />}
-      {step === 2 && <MonthView />}
-      {step === 3 && <YearView />}
-    </View>
+    <TouchableWithoutFeedback
+      onPress={() => console.log("Inner touch")}
+      style={{ backgroundColor: "green" }}
+    >
+      <View style={styles.content}>
+        {step === 1 && <DayView />}
+        {step === 2 && <MonthView />}
+        {step === 3 && <YearView />}
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
