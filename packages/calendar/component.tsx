@@ -1,4 +1,4 @@
-import React from "react";
+import { type FC, ReactNode } from "react";
 import {
   View,
   Pressable,
@@ -6,20 +6,21 @@ import {
   Modal as RNModal,
   TouchableWithoutFeedback,
   type ViewStyle,
+  Platform,
 } from "react-native";
 import { CalendarProvider, useCalendar } from "./calendar-context";
 import { DayView } from "./day-view";
 import { MonthView } from "./month-view";
 import { YearView } from "./year-view";
 
-export const Root: React.FC<{
-  children: React.ReactNode;
+export const Root: FC<{
+  children: ReactNode;
 }> = ({ children }) => {
   return <CalendarProvider>{children}</CalendarProvider>;
 };
 
-export const Trigger: React.FC<{
-  children: React.ReactNode;
+export const Trigger: FC<{
+  children: ReactNode;
   pressableStyle?: ViewStyle;
 }> = ({ children, pressableStyle }) => {
   const { toggleIsOpen, updatePaddingTop } = useCalendar();
@@ -42,8 +43,8 @@ export const Trigger: React.FC<{
   );
 };
 
-export const Modal: React.FC<{
-  children: React.ReactNode;
+export const Modal: FC<{
+  children: ReactNode;
 }> = ({ children }) => {
   const { isOpen, toggleIsOpen, paddingTop } = useCalendar();
   return (
@@ -57,9 +58,10 @@ export const Modal: React.FC<{
         <View
           style={{
             padding: 20,
-            paddingTop,
+            paddingTop: Platform.OS === "ios" ? paddingTop + 20 : paddingTop,
             flex: 1,
             width: "100%",
+            backgroundColor: "0 2px 8px rgba(0, 0, 0, 0.3)",
           }}
         >
           <TouchableWithoutFeedback>{children}</TouchableWithoutFeedback>
@@ -69,7 +71,7 @@ export const Modal: React.FC<{
   );
 };
 
-export const Content: React.FC = () => {
+export const Content: FC = () => {
   const { step, isOpen } = useCalendar();
 
   if (!isOpen) return null;
