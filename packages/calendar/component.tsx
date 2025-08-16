@@ -6,7 +6,6 @@ import {
   Modal as RNModal,
   TouchableWithoutFeedback,
   type ViewStyle,
-  Platform,
 } from "react-native";
 import { CalendarProvider, useCalendar } from "./calendar-context";
 import { DayView } from "./day-view";
@@ -55,11 +54,7 @@ export const Modal: FC<{
       animationType="fade"
       onRequestClose={toggleIsOpen}
     >
-      <TouchableWithoutFeedback
-        onPress={() => {
-          toggleIsOpen();
-        }}
-      >
+      <TouchableWithoutFeedback onPress={toggleIsOpen}>
         <View
           style={{
             padding: 20,
@@ -82,10 +77,7 @@ export const Content: FC = () => {
   if (!isOpen) return null;
 
   return (
-    <TouchableWithoutFeedback
-      onPress={() => console.log("Inner touch")}
-      style={{ backgroundColor: "green" }}
-    >
+    <TouchableWithoutFeedback>
       <View style={styles.content}>
         {step === 1 && <DayView />}
         {step === 2 && <MonthView />}
