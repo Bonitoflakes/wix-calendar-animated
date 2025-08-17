@@ -6,34 +6,34 @@ import Header from "./header";
 import CustomArrow from "./arrows";
 import CustomDay, { type CustomDayProps } from "./day";
 import { calendarThemeOverride } from "./theme";
-
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const XDate = require("xdate");
+import { format } from "date-fns";
 
 export const DayView = () => {
-  const { date, setDate, setSelectedDate, selectedDate, toggleIsOpen } = useCalendar();
+  const { date, updateDate, setSelectedDate, selectedDate, toggleIsOpen } = useCalendar();
 
-  const headerTitle = date.toString("MMMM yyyy");
-  const initialDate = date.toString("i").split("T")[0];
+  const headerTitle = format(date, "MMMM yyyy");
+  const initialDate = format(date, "yyyy-MM-dd");
 
   const handleMonthChange = useCallback(
     (data: DateData) => {
-      const dateString = data.dateString;
-      setDate(new XDate(dateString));
+      console.log("~ handleMonthChange:", data);
+      const newDate = new Date(data.dateString);
+      updateDate(newDate);
     },
-    [setDate]
+    [updateDate]
   );
 
   const handleDayPress = useCallback(
     (data: DateData) => {
       const { dateString } = data;
       console.log("~ handleDayPress:", dateString);
-      const newDate = new XDate(dateString);
-      console.log("xdate", newDate);
+      const newDate = new Date(dateString);
+      console.log("xdate log", newDate);
       setSelectedDate(newDate);
+      updateDate(newDate);
       toggleIsOpen();
     },
-    [toggleIsOpen, setSelectedDate]
+    [toggleIsOpen, updateDate, setSelectedDate]
   );
 
   const renderArrow = useCallback(
@@ -44,9 +44,10 @@ export const DayView = () => {
   const renderDay = useCallback((data: CustomDayProps) => <CustomDay {...data} />, []);
 
   const markedDate = useMemo<MarkedDates>(() => {
+    const formattedDate = selectedDate ? format(selectedDate, "yyyy-MM-dd") : "";
     return selectedDate
       ? {
-          [selectedDate.toString("yyyy-MM-dd")]: {
+          [formattedDate]: {
             selected: true,
             selectedColor: "blue",
           },
@@ -66,7 +67,7 @@ export const DayView = () => {
       dayComponent={renderDay}
       customHeaderTitle={<Header title={headerTitle} />}
       disableAllTouchEventsForDisabledDays
-      testID="CustomCalendar"
+      testID="day-view"
       theme={calendarThemeOverride}
     />
   );

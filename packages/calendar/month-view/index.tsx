@@ -6,30 +6,33 @@ import { MonthHeader } from "./header";
 
 // Separate the context consumption to a wrapper component
 export const MonthView = memo(() => {
-  const { updateYear, date: currentDate } = useCalendar();
+  const { updateDate, date: currentDate } = useCalendar();
 
-  return <Month currentDate={currentDate} updateYear={updateYear} />;
+  return <Month currentDate={currentDate} updateDate={updateDate} />;
 });
 
 // Make Month a pure component that doesn't use context
 const Month = memo(
   ({
     currentDate,
-    updateYear,
+    updateDate,
   }: {
-    currentDate: XDate;
-    updateYear: (year: number) => void;
+    currentDate: Date;
+    updateDate: (date: Date ) => void;
   }) => {
-    const currentMonth = currentDate.getMonth();
     const currentYear = currentDate.getFullYear();
 
     const goToPrevYear = useCallback(() => {
-      updateYear(currentYear - 1);
-    }, [currentYear, updateYear]);
+      const newDate = new Date(currentDate);
+      newDate.setFullYear(newDate.getFullYear() - 1);
+      updateDate(newDate);
+    }, [currentDate, updateDate]);
 
     const goToNextYear = useCallback(() => {
-      updateYear(currentYear + 1);
-    }, [currentYear, updateYear]);
+      const newDate = new Date(currentDate);
+      newDate.setFullYear(newDate.getFullYear() + 1);
+      updateDate(newDate);
+    }, [currentDate, updateDate]);
 
     return (
       <View style={[styles.container]}>
@@ -38,7 +41,7 @@ const Month = memo(
           goToNextYear={goToNextYear}
           goToPrevYear={goToPrevYear}
         />
-        <MonthGridWrapper currentMonth={currentMonth} />
+        <MonthGridWrapper />
       </View>
     );
   }

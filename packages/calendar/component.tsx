@@ -14,15 +14,17 @@ import { YearView } from "./year-view";
 
 export const Root: FC<{
   children: ReactNode;
-}> = ({ children }) => {
-  return <CalendarProvider>{children}</CalendarProvider>;
+  value?: Date;
+  onChange?: (date: Date) => void;
+}> = ({ children, ...props }) => {
+  return <CalendarProvider {...props}>{children}</CalendarProvider>;
 };
 
 export const Trigger: FC<{
   children: ReactNode;
   pressableStyle?: ViewStyle;
 }> = ({ children, pressableStyle }) => {
-  const { toggleIsOpen, updatePaddingTop } = useCalendar();
+  const { toggleIsOpen } = useCalendar();
   return (
     <Pressable
       style={{
@@ -34,7 +36,6 @@ export const Trigger: FC<{
       onPress={toggleIsOpen}
       onLayout={(e) => {
         console.log(e.nativeEvent.layout, "onLayout");
-        updatePaddingTop(e.nativeEvent.layout.y);
       }}
     >
       {children}
@@ -58,7 +59,6 @@ export const Modal: FC<{
         <View
           style={{
             padding: 20,
-            // paddingTop: paddingTop + 60,
             flex: 1,
             width: "100%",
             backgroundColor: "0 2px 8px rgba(0, 0, 0, 0.5)",

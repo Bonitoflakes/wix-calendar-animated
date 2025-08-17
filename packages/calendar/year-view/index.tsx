@@ -16,7 +16,7 @@ const TOTAL_YEARS = END_YEAR - START_YEAR + 1;
 
 export const YearView: FC<YearProps> = React.memo(
   ({ disabledFromYear, yearsPerPage = 12 }) => {
-    const { date: currentDate, updateYear, decrementStep } = useCalendar();
+    const { date: currentDate, updateDate, decrementStep } = useCalendar();
     const currentYear = currentDate.getFullYear();
 
     const totalPages = Math.ceil(TOTAL_YEARS / yearsPerPage);
@@ -53,7 +53,9 @@ export const YearView: FC<YearProps> = React.memo(
       if (disabledFromYear !== undefined && year >= disabledFromYear) {
         return;
       }
-      updateYear(year);
+      const newDate = new Date(currentDate);
+      newDate.setFullYear(year);
+      updateDate(newDate);
       decrementStep();
     };
 

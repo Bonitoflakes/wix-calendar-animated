@@ -1,50 +1,52 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react";
+import { createContext, useCallback, useContext, useState, type ReactNode } from "react";
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const XDate = require("xdate");
-
-const today: XDate = new XDate();
-
+const today = new Date();
 const _MAX_STEPS = 3;
 const _MIN_STEPS = 1;
 
 type CalendarActions = {
-  setStep: React.Dispatch<React.SetStateAction<number>>;
-  setDate: React.Dispatch<React.SetStateAction<XDate>>;
-  setSelectedDate: React.Dispatch<React.SetStateAction<XDate | null>>;
+  setSelectedDate: React.Dispatch<React.SetStateAction<Date | null>>;
+
   incrementStep: () => void;
   decrementStep: () => void;
-  updateMonth: (month: number) => void;
-  updateYear: (year: number) => void;
-  updatePaddingTop: (value: number) => void;
   toggleIsOpen: () => void;
+
+  updateDate: (date: Date) => void;
 };
 
 type CalendarState = {
   step: number;
-  date: XDate;
-  selectedDate: XDate | null;
-  paddingTop: number;
+  date: Date;
+  selectedDate: Date | null;
   isOpen: boolean;
 };
 
-type CalendarContextProps = CalendarActions & CalendarState;
+type ControlledCalendarProps = {
+  name?: string;
+  value?: Date;
+  onChange?: (date: Date) => void;
+};
 
-const CalendarContext = createContext<CalendarContextProps | null>(null);
+type ICalendarContext = CalendarActions & CalendarState & ControlledCalendarProps;
 
-export const CalendarProvider = ({ children }: { children: ReactNode }) => {
-  const [step, setStep] = useState(1);
-  const [date, setDate] = useState(today);
-  const [isOpen, setIsOpen] = useState(false);
-  const [paddingTop, setPaddingTop] = useState(0);
-  const [selectedDate, setSelectedDate] = useState<XDate | null>(null);
+const CalendarContext = createContext<ICalendarContext | null>(null);
+
+export const CalendarProvider = ({
+  children,
+  value,
+  onChange,
+}: {
+  children: ReactNode;
+} & ControlledCalendarProps) => {
+  const [isOpen, setIsOpen] = useState(false); // show or hide calendar modal
+  const [step, setStep] = useState(1); // control which view is shown
+
+  const [date, setInternalDate] = useState(() => {
+    if (value) return value;
+    return today;
+  }); // local date state synced to hook form.
+
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null); // This is used for marking selected dates. It's internal use only.
 
   const toggleIsOpen = useCallback(() => setIsOpen((prev) => !prev), []);
 
@@ -57,62 +59,27 @@ export const CalendarProvider = ({ children }: { children: ReactNode }) => {
     []
   );
 
-  const updatePaddingTop = useCallback((value: number) => {
-    setPaddingTop(value);
-  }, []);
+  const updateDate = (date: Date) => {
+    setInternalDate(date);
+    // if (onChange) onChange(date);
+  };
 
-  const updateMonth = useCallback((month: number) => {
-    if (month < 0 || month > 11) return;
-
-    setDate((prevDate) => {
-      const newDate = new XDate(prevDate);
-      newDate.setMonth(month);
-      return newDate;
-    });
-  }, []);
-
-  const updateYear = useCallback((year: number) => {
-    if (year < 1970 || year > 2100) return;
-
-    setDate((prevDate) => {
-      const newDate = new XDate(prevDate);
-      newDate.setFullYear(year);
-      return newDate;
-    });
-  }, []);
-
-  const value = useMemo(() => {
-    return {
-      step,
-      date,
-      selectedDate,
-      paddingTop,
-      isOpen,
-      updatePaddingTop,
-      toggleIsOpen,
-      setStep,
-      setDate,
-      setSelectedDate,
-      incrementStep,
-      decrementStep,
-      updateMonth,
-      updateYear,
-    };
-  }, [
+  const memoedValues = {
     step,
     date,
     selectedDate,
-    paddingTop,
     isOpen,
-    updatePaddingTop,
+    onChange,
     toggleIsOpen,
+    setSelectedDate,
     incrementStep,
     decrementStep,
-    updateMonth,
-    updateYear,
-  ]);
+    updateDate,
+  };
 
-  return <CalendarContext.Provider value={value}>{children}</CalendarContext.Provider>;
+  return (
+    <CalendarContext.Provider value={memoedValues}>{children}</CalendarContext.Provider>
+  );
 };
 
 export function useCalendar() {
