@@ -1,0 +1,27 @@
+appId: com.rishabkhivsara.wixcalendaranimated
+---
+- launchApp:
+    clearState: true
+- tapOn: Tab Four
+- tapOn: dd-mm-yyyy
+- assertVisible:
+    id: day-view
+- repeat:
+    times: 50
+    commands:
+      - tapOn:
+          id: day-view.header.rightArrow
+- repeat:
+    times: 50
+    commands:
+      - tapOn:
+          id: day-view.header.leftArrow
+- tapOn: August 2025
+- tapOn: year-header
+- tapOn: 2018
+- tapOn: January
+- assertVisible: Set Date
+- tapOn:
+    id: day-view.day_2018-01-03
+- tapOn: Set Date
+- assertVisible: Open Calendar:3rd January, 2018
