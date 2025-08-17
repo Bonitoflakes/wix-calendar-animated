@@ -1,44 +1,50 @@
-import { type FC, ReactNode } from "react";
+import { type FC, type ReactNode } from 'react';
 import {
-  View,
-  Pressable,
-  StyleSheet,
   Modal as RNModal,
+  Pressable,
+  type PressableProps,
+  StyleSheet,
   TouchableWithoutFeedback,
+  View,
   type ViewStyle,
-} from "react-native";
-import { CalendarProvider, useCalendar } from "./calendar-context";
-import { DayView } from "./day-view";
-import { MonthView } from "./month-view";
-import { YearView } from "./year-view";
+} from 'react-native';
+
+import { CalendarProvider, useCalendar } from './calendar-context';
+import { DayView } from './day-view';
+import { MonthView } from './month-view';
+import { YearView } from './year-view';
 
 export const Root: FC<{
   children: ReactNode;
-  value?: Date;
   onChange?: (date: Date) => void;
+  value?: Date;
 }> = ({ children, ...props }) => {
   return <CalendarProvider {...props}>{children}</CalendarProvider>;
 };
 
-export const Trigger: FC<{
-  children: ReactNode;
+type TriggerProps = {
+  children?: ReactNode;
+  pressableProps?: PressableProps;
   pressableStyle?: ViewStyle;
-}> = ({ children, pressableStyle }) => {
-  const { toggleModal } = useCalendar();
+  renderItem?: (value: Date | undefined) => ReactNode;
+};
+
+export const Trigger: FC<TriggerProps> = ({
+  children,
+  renderItem,
+  pressableProps,
+}) => {
+  const { toggleModal, value } = useCalendar();
+
   return (
     <Pressable
-      style={{
-        paddingHorizontal: 20,
-        paddingVertical: 10,
-        borderWidth: 1,
-        ...pressableStyle,
+      onPress={(e) => {
+        if (pressableProps?.onPress) pressableProps.onPress(e);
+        toggleModal();
       }}
-      onPress={toggleModal}
-      onLayout={(e) => {
-        console.log(e.nativeEvent.layout, "onLayout");
-      }}
+      {...pressableProps}
     >
-      {children}
+      {renderItem ? renderItem(value) : children}
     </Pressable>
   );
 };
@@ -68,8 +74,8 @@ export const Modal: FC<{
           style={{
             padding: 20,
             flex: 1,
-            width: "100%",
-            backgroundColor: "0 2px 8px rgba(0, 0, 0, 0.5)",
+            width: '100%',
+            backgroundColor: '0 2px 8px rgba(0, 0, 0, 0.5)',
             paddingTop: 200,
           }}
         >
@@ -98,8 +104,8 @@ export const Content: FC = () => {
 
 const styles = StyleSheet.create({
   content: {
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderRadius: 8,
-    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
   },
 });
