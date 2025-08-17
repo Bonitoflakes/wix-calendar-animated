@@ -89,7 +89,7 @@ export const DayView = () => {
         hideExtraDays
         markedDates={markedDate}
         onDayPress={handleDayPress}
-        initialDate={initialDate}
+        current={initialDate}
         renderArrow={renderArrow}
         onMonthChange={handleMonthChange}
         dayComponent={renderDay}
