@@ -1,11 +1,12 @@
-import { View, StyleSheet } from "react-native";
-import { YearItem } from "./item";
+import { StyleSheet, View } from 'react-native';
+
+import { YearItem } from './item';
 
 type YearGridProps = {
-  years: number[];
   currentYear: number;
   disabledFromYear?: number;
   handleYearSelect: (year: number) => void;
+  years: number[];
 };
 
 export const YearGrid = ({
@@ -22,7 +23,8 @@ export const YearGrid = ({
         }
 
         const isActive = currentYear === item;
-        const disabled = disabledFromYear !== undefined && item >= disabledFromYear;
+        const disabled =
+          disabledFromYear !== undefined && item >= disabledFromYear;
 
         return (
           <YearItem
@@ -40,14 +42,14 @@ export const YearGrid = ({
 
 const styles = StyleSheet.create({
   gridContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 20,
     paddingTop: 20,
   },
   yearButton: {
     minWidth: 84,
-    alignItems: "center",
+    alignItems: 'center',
     padding: 10,
     flex: 1,
     borderRadius: 4,

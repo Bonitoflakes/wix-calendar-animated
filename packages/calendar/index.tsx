@@ -1,5 +1,5 @@
-import { Root, Trigger, Content, Modal } from "./component";
-import { useCalendar } from "./calendar-context";
+import { useCalendar } from './calendar-context';
+import { Content, Modal, Root, Trigger } from './component';
 
 export const Calendar = {
   Root,
@@ -9,4 +9,4 @@ export const Calendar = {
   useCalendar,
 };
 
-export * from "./types";
+export * from './types';

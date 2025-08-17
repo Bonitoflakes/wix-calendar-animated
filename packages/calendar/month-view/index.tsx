@@ -1,9 +1,10 @@
-import { View, StyleSheet } from "react-native";
-import { memo, useCallback } from "react";
-import { useCalendar } from "../calendar-context";
-import { MonthGridWrapper } from "./grid";
-import { MonthHeader } from "./header";
-import { addYears, subYears } from "date-fns";
+import { addYears, subYears } from 'date-fns';
+import { memo, useCallback } from 'react';
+import { StyleSheet, View } from 'react-native';
+
+import { useCalendar } from '../calendar-context';
+import { MonthGridWrapper } from './grid';
+import { MonthHeader } from './header';
 
 // Separate the context consumption to a wrapper component
 export const MonthView = memo(() => {
@@ -46,9 +47,9 @@ const Month = memo(
   }
 );
 
-MonthView.displayName = "MonthView";
-Month.displayName = "Month";
+MonthView.displayName = 'MonthView';
+Month.displayName = 'Month';
 
 const styles = StyleSheet.create({
-  container: { padding: 20, backgroundColor: "white", borderRadius: 8 },
+  container: { padding: 20, backgroundColor: 'white', borderRadius: 8 },
 });

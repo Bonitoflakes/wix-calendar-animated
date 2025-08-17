@@ -1,7 +1,8 @@
-import { memo } from "react";
-import { View, Pressable, Text, StyleSheet } from "react-native";
-import { useCalendar } from "../calendar-context";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { memo } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+
+import { useCalendar } from '../calendar-context';
 
 type MonthHeaderProps = {
   currentYear: number;
@@ -26,7 +27,7 @@ export const MonthHeader = memo(
           <Ionicons
             name="arrow-back"
             size={24}
-            color={currentYear === START_YEAR ? "#ccc" : "#222"}
+            color={currentYear === START_YEAR ? '#ccc' : '#222'}
           />
         </Pressable>
 
@@ -46,7 +47,7 @@ export const MonthHeader = memo(
           <Ionicons
             name="arrow-forward"
             size={24}
-            color={currentYear === END_YEAR ? "#ccc" : "#222"}
+            color={currentYear === END_YEAR ? '#ccc' : '#222'}
           />
         </Pressable>
       </View>
@@ -54,28 +55,28 @@ export const MonthHeader = memo(
   }
 );
 
-MonthHeader.displayName = "MonthHeader";
+MonthHeader.displayName = 'MonthHeader';
 
 const styles = StyleSheet.create({
   headerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     gap: 20,
-    width: "100%",
+    width: '100%',
   },
   headerArrow: {
-    backgroundColor: "#F2F2F5",
+    backgroundColor: '#F2F2F5',
     padding: 0,
     width: 36,
     height: 36,
     borderRadius: 4,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   headerTitle: {
     fontSize: 16,
-    fontFamily: "Lato",
+    fontFamily: 'Lato',
     fontWeight: 700,
   },
 });

@@ -1,14 +1,15 @@
-import { useCallback, useMemo, useState } from "react";
-import { type DateData, Calendar } from "react-native-calendars";
-import type { Direction, MarkedDates } from "react-native-calendars/src/types";
-import { useCalendar } from "../calendar-context";
-import Header from "./header";
-import CustomArrow from "./arrows";
-import CustomDay, { type CustomDayProps } from "./day";
-import { calendarThemeOverride } from "./theme";
-import { format } from "date-fns";
-import { Pressable, View, Text, StyleSheet } from "react-native";
-import type { MarkingProps } from "react-native-calendars/src/calendar/day/marking";
+import { format } from 'date-fns';
+import { useCallback, useMemo, useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Calendar, type DateData } from 'react-native-calendars';
+import type { MarkingProps } from 'react-native-calendars/src/calendar/day/marking';
+import type { Direction, MarkedDates } from 'react-native-calendars/src/types';
+
+import { useCalendar } from '../calendar-context';
+import CustomArrow from './arrows';
+import CustomDay, { type CustomDayProps } from './day';
+import Header from './header';
+import { calendarThemeOverride } from './theme';
 
 export const DayView = () => {
   const {
@@ -21,15 +22,15 @@ export const DayView = () => {
     resetInternals,
   } = useCalendar();
 
-  const headerTitle = format(draftDate, "MMMM yyyy");
-  const currentDateString = format(draftDate, "yyyy-MM-dd");
+  const headerTitle = format(draftDate, 'MMMM yyyy');
+  const currentDateString = format(draftDate, 'yyyy-MM-dd');
 
   // enable confirm button only on successful day selection.
   const [isDisabled, setIsDisabled] = useState(true);
 
   const handleMonthChange = useCallback(
     (data: DateData) => {
-      console.log("~ handleMonthChange:", data);
+      console.log('~ handleMonthChange:', data);
       const newDate = new Date(data.dateString);
       updateDraftDate(newDate);
     },
@@ -39,7 +40,7 @@ export const DayView = () => {
   const handleDayPress = useCallback(
     (data: DateData) => {
       const { dateString } = data;
-      console.log("~ handleDayPress:", dateString);
+      console.log('~ handleDayPress:', dateString);
       const newDate = new Date(dateString);
       setSelectedDate(newDate);
       updateDraftDate(newDate);
@@ -69,11 +70,19 @@ export const DayView = () => {
     []
   );
 
-  const renderDay = useCallback((data: CustomDayProps) => <CustomDay {...data} />, []);
+  const renderDay = useCallback(
+    (data: CustomDayProps) => <CustomDay {...data} />,
+    []
+  );
 
   const markedDate = useMemo<MarkedDates>(() => {
-    const formatOptions: MarkingProps = { selected: true, selectedColor: "blue" };
-    const formattedDate = selectedDate ? format(selectedDate, "yyyy-MM-dd") : "";
+    const formatOptions: MarkingProps = {
+      selected: true,
+      selectedColor: 'blue',
+    };
+    const formattedDate = selectedDate
+      ? format(selectedDate, 'yyyy-MM-dd')
+      : '';
 
     return {
       [formattedDate]: formatOptions,
@@ -125,24 +134,24 @@ const styles = StyleSheet.create({
   confirmButton: {
     paddingVertical: 12,
     paddingHorizontal: 18,
-    backgroundColor: "#0400D1",
+    backgroundColor: '#0400D1',
     borderRadius: 8,
   },
   cancelButton: {
     paddingVertical: 12,
     paddingHorizontal: 18,
-    backgroundColor: "#0466C833",
+    backgroundColor: '#0466C833',
     borderRadius: 8,
   },
   confirmText: {
-    color: "white",
+    color: 'white',
   },
   cancelText: {
-    color: "#0466C8",
+    color: '#0466C8',
   },
   buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
     padding: 16,
     gap: 16,
   },

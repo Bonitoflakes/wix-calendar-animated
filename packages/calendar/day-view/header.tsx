@@ -1,6 +1,7 @@
-import React from "react";
-import { Pressable, Text, StyleSheet, View } from "react-native";
-import { useCalendar } from "../calendar-context";
+import React from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+
+import { useCalendar } from '../calendar-context';
 
 const Header = ({ title }: { title: string }) => {
   const { incrementStep } = useCalendar();
@@ -15,12 +16,12 @@ const Header = ({ title }: { title: string }) => {
 
 const styles = StyleSheet.create({
   container: {
-    borderBottomColor: "#000",
+    borderBottomColor: '#000',
     borderBottomWidth: 1,
   },
   title: {
     fontSize: 16,
-    fontFamily: "Lato",
+    fontFamily: 'Lato',
     fontWeight: 700,
   },
 });

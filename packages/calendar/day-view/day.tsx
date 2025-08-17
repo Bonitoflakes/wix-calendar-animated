@@ -1,15 +1,15 @@
-import React from "react";
-import { Pressable, StyleSheet, View, Text } from "react-native";
-import { type DateData } from "react-native-calendars";
-import { type BasicDayProps } from "react-native-calendars/src/calendar/day/basic";
+import React from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { type DateData } from 'react-native-calendars';
+import { type BasicDayProps } from 'react-native-calendars/src/calendar/day/basic';
 
 export type CustomDayProps = BasicDayProps & {
   date?: DateData;
 };
 
 const CustomDay = (props: CustomDayProps) => {
-  if (props.testID === "day-view.day_2100-12-23") {
-    console.log("🚀🚀🚀 ~ CustomDay ~ props:", JSON.stringify(props, null, 2));
+  if (props.testID === 'day-view.day_2100-12-23') {
+    console.log('🚀🚀🚀 ~ CustomDay ~ props:', JSON.stringify(props, null, 2));
     console.log(props);
   }
 
@@ -26,8 +26,10 @@ const CustomDay = (props: CustomDayProps) => {
       accessibilityLabel={accessibilityLabel}
       style={[styles.container, isSelected && styles.selectedContainer]}
     >
-      <Text style={[styles.text, isSelected && styles.selectedText]}>{date?.day}</Text>
-      {state === "today" && <View style={styles.today} />}
+      <Text style={[styles.text, isSelected && styles.selectedText]}>
+        {date?.day}
+      </Text>
+      {state === 'today' && <View style={styles.today} />}
     </Pressable>
   );
 };
@@ -36,33 +38,33 @@ export default React.memo(CustomDay);
 
 const styles = StyleSheet.create({
   container: {
-    display: "flex",
-    width: "100%",
+    display: 'flex',
+    width: '100%',
     aspectRatio: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: 4,
-    backgroundColor: "#F2F2F5",
-    overflow: "hidden",
+    backgroundColor: '#F2F2F5',
+    overflow: 'hidden',
   },
   selectedContainer: {
-    backgroundColor: "#0400D1",
+    backgroundColor: '#0400D1',
   },
   text: {
-    color: "#52575C",
-    fontFamily: "Poppins-regular",
+    color: '#52575C',
+    fontFamily: 'Poppins-regular',
     fontSize: 14,
   },
   selectedText: {
-    color: "white",
+    color: 'white',
   },
   today: {
-    transform: [{ rotate: "45deg" }],
+    transform: [{ rotate: '45deg' }],
     top: -7,
     right: -8,
     width: 15,
     height: 15,
-    backgroundColor: "#FF791F",
-    position: "absolute",
+    backgroundColor: '#FF791F',
+    position: 'absolute',
   },
 });

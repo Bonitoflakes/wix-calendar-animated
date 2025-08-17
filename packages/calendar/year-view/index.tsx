@@ -1,8 +1,9 @@
-import { View, StyleSheet } from "react-native";
-import React, { useState, useMemo, useCallback, type FC } from "react";
-import { YearHeader } from "./header";
-import { YearGrid } from "./grid";
-import { useCalendar } from "../calendar-context";
+import React, { type FC, useCallback, useMemo, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+
+import { useCalendar } from '../calendar-context';
+import { YearGrid } from './grid';
+import { YearHeader } from './header';
 
 type YearProps = {
   disabledFromYear?: number;
@@ -42,7 +43,10 @@ export const YearView: FC<YearProps> = React.memo(
       return data;
     }, [page, yearsPerPage]);
 
-    const handlePrev = useCallback(() => setPage((p) => Math.max(0, p - 1)), []);
+    const handlePrev = useCallback(
+      () => setPage((p) => Math.max(0, p - 1)),
+      []
+    );
 
     const handleNext = useCallback(
       () => setPage((p) => Math.min(totalPages - 1, p + 1)),
@@ -79,11 +83,11 @@ export const YearView: FC<YearProps> = React.memo(
   }
 );
 
-YearView.displayName = "YearView";
+YearView.displayName = 'YearView';
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderRadius: 8,
     padding: 20,
   },

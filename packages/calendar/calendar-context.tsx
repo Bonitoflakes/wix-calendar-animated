@@ -1,41 +1,43 @@
 import {
   createContext,
+  type ReactNode,
   useCallback,
   useContext,
   useEffect,
   useState,
-  type ReactNode,
-} from "react";
+} from 'react';
 
 // day | month | year
 const _MIN_STEPS = 1;
 const _MAX_STEPS = 3;
 
 type CalendarActions = {
-  setSelectedDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
+  decrementStep: () => void;
 
   incrementStep: () => void;
-  decrementStep: () => void;
-  toggleModal: () => void;
-
-  updateDraftDate: (date: Date) => void;
   resetInternals: () => void;
+  setSelectedDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
+
+  toggleModal: () => void;
+  updateDraftDate: (date: Date) => void;
 };
 
 type CalendarState = {
-  step: number;
   draftDate: Date;
-  selectedDate?: Date;
   isOpen: boolean;
+  selectedDate?: Date;
+  step: number;
 };
 
 type ControlledCalendarProps = {
   name?: string;
-  value?: Date;
   onChange?: (date: Date) => void;
+  value?: Date;
 };
 
-type ICalendarContext = CalendarActions & CalendarState & ControlledCalendarProps;
+type ICalendarContext = CalendarActions &
+  CalendarState &
+  ControlledCalendarProps;
 
 const CalendarContext = createContext<ICalendarContext | null>(null);
 
@@ -43,9 +45,9 @@ export const CalendarProvider = ({
   children,
   value,
   onChange,
-}: {
+}: ControlledCalendarProps & {
   children: ReactNode;
-} & ControlledCalendarProps) => {
+}) => {
   const [isOpen, setIsOpen] = useState(false); // show or hide calendar modal
   const [step, setStep] = useState(1); // control which view is shown
 
@@ -60,7 +62,7 @@ export const CalendarProvider = ({
 
   useEffect(() => {
     if (value) {
-      console.log("Hook form value has changed", value);
+      console.log('Hook form value has changed', value);
       setSelectedDate(value);
       setDraftDate(value);
     }
@@ -81,7 +83,7 @@ export const CalendarProvider = ({
   const resetInternals = useCallback(() => {
     const initialDate = value ?? new Date();
     const selectedDate = value ?? undefined;
-    console.log("Resetting internals with:", initialDate, selectedDate);
+    console.log('Resetting internals with:', initialDate, selectedDate);
     setDraftDate(initialDate);
     setSelectedDate(selectedDate);
   }, [value]);
@@ -102,14 +104,16 @@ export const CalendarProvider = ({
   };
 
   return (
-    <CalendarContext.Provider value={contextValues}>{children}</CalendarContext.Provider>
+    <CalendarContext.Provider value={contextValues}>
+      {children}
+    </CalendarContext.Provider>
   );
 };
 
 export function useCalendar() {
   const context = useContext(CalendarContext);
   if (!context) {
-    throw new Error("useCalendar must be used within a CalendarProvider");
+    throw new Error('useCalendar must be used within a CalendarProvider');
   }
   return context;
 }

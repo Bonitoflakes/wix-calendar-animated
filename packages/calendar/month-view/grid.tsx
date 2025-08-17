@@ -1,21 +1,22 @@
-import { memo } from "react";
-import { View, Pressable, Text, StyleSheet } from "react-native";
-import { useCalendar } from "../calendar-context";
-import { setMonth } from "date-fns";
+import { setMonth } from 'date-fns';
+import { memo } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+
+import { useCalendar } from '../calendar-context';
 
 const _MONTHS = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
 ];
 
 // Separate context consumption in MonthGrid. This prevents re-renders if something changes in the context as the memo kicks in to compare
@@ -32,9 +33,9 @@ export const MonthGridWrapper = memo(() => {
 });
 
 type MonthGridProps = {
+  decrementStep: () => void;
   draftDate: Date;
   updateDraftDate: (date: Date) => void;
-  decrementStep: () => void;
 };
 
 const MonthGrid = memo(
@@ -54,7 +55,9 @@ const MonthGrid = memo(
               }}
               style={[styles.monthButton, isActive && styles.activeMonthButton]}
             >
-              <Text style={[styles.monthText, isActive && styles.activeMonthText]}>
+              <Text
+                style={[styles.monthText, isActive && styles.activeMonthText]}
+              >
                 {month}
               </Text>
             </Pressable>
@@ -65,32 +68,32 @@ const MonthGrid = memo(
   }
 );
 
-MonthGrid.displayName = "MonthGrid";
-MonthGridWrapper.displayName = "MonthGridWrapper";
+MonthGrid.displayName = 'MonthGrid';
+MonthGridWrapper.displayName = 'MonthGridWrapper';
 
 const styles = StyleSheet.create({
   gridContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 20,
     paddingTop: 20,
   },
   monthButton: {
     minWidth: 84,
-    alignItems: "center",
+    alignItems: 'center',
     padding: 10,
     flex: 1,
     borderRadius: 4,
   },
   monthText: {
     fontSize: 14,
-    fontFamily: "Lato",
-    color: "#52575C",
+    fontFamily: 'Lato',
+    color: '#52575C',
   },
   activeMonthText: {
-    color: "#0466C8",
+    color: '#0466C8',
   },
   activeMonthButton: {
-    backgroundColor: "#0466C833",
+    backgroundColor: '#0466C833',
   },
 });

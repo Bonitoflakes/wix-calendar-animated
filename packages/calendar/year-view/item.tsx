@@ -1,10 +1,10 @@
-import { Pressable, Text, StyleSheet } from "react-native";
+import { Pressable, StyleSheet, Text } from 'react-native';
 
 type YearItemProps = {
-  item: number;
-  handleYearSelect: (year: number) => void;
   disabled: boolean;
+  handleYearSelect: (year: number) => void;
   isActive: boolean;
+  item: number;
 };
 
 export const YearItem: React.FC<YearItemProps> = ({
@@ -39,25 +39,25 @@ export const YearItem: React.FC<YearItemProps> = ({
 const styles = StyleSheet.create({
   yearButton: {
     minWidth: 84,
-    alignItems: "center",
+    alignItems: 'center',
     padding: 10,
     flex: 1,
     borderRadius: 4,
   },
   yearButtonActive: {
-    backgroundColor: "#0466C833",
+    backgroundColor: '#0466C833',
   },
   yearButtonDisabled: {
-    backgroundColor: "#f5f5f5",
+    backgroundColor: '#f5f5f5',
   },
   yearText: {
     fontSize: 16,
-    color: "#222",
+    color: '#222',
   },
   yearTextActive: {
-    color: "#0466C8",
+    color: '#0466C8',
   },
   yearTextDisabled: {
-    color: "#aaa",
+    color: '#aaa',
   },
 });
