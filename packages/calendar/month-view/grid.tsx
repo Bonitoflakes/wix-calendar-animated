@@ -19,45 +19,51 @@ const _MONTHS = [
 
 // Separate context consumption in MonthGrid. This prevents re-renders when something changes in the context as the memo kicks in to compare
 export const MonthGridWrapper = memo(() => {
-  const { updateDate, decrementStep, date } = useCalendar();
+  const { updateInternalDate, decrementStep, internalDate: date } = useCalendar();
 
   return (
-    <MonthGrid currentDate={date} updateDate={updateDate} decrementStep={decrementStep} />
+    <MonthGrid
+      currentDate={date}
+      updateInternalDate={updateInternalDate}
+      decrementStep={decrementStep}
+    />
   );
 });
 
 type MonthGridProps = {
   currentDate: Date;
-  updateDate: (date: Date) => void;
+  updateInternalDate: (date: Date) => void;
   decrementStep: () => void;
 };
 
-const MonthGrid = memo(({ currentDate, updateDate, decrementStep }: MonthGridProps) => {
-  return (
-    <View style={[styles.gridContainer]}>
-      {_MONTHS.map((month, idx) => {
-        const isActive = currentDate.getMonth() === idx;
+const MonthGrid = memo(
+  ({ currentDate, updateInternalDate, decrementStep }: MonthGridProps) => {
+    return (
+      <View style={[styles.gridContainer]}>
+        {_MONTHS.map((month, idx) => {
+          const isActive = currentDate.getMonth() === idx;
 
-        return (
-          <Pressable
-            key={idx}
-            onPress={() => {
-              const newDate = new Date(currentDate);
-              newDate.setMonth(idx);
-              updateDate(newDate);
-              decrementStep();
-            }}
-            style={[styles.monthButton, isActive && styles.activeMonthButton]}
-          >
-            <Text style={[styles.monthText, isActive && styles.activeMonthText]}>
-              {month}
-            </Text>
-          </Pressable>
-        );
-      })}
-    </View>
-  );
-});
+          return (
+            <Pressable
+              key={idx}
+              onPress={() => {
+                const newDate = new Date(currentDate);
+                newDate.setMonth(idx);
+                updateInternalDate(newDate);
+                decrementStep();
+              }}
+              style={[styles.monthButton, isActive && styles.activeMonthButton]}
+            >
+              <Text style={[styles.monthText, isActive && styles.activeMonthText]}>
+                {month}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
+    );
+  }
+);
 
 MonthGrid.displayName = "MonthGrid";
 MonthGridWrapper.displayName = "MonthGridWrapper";

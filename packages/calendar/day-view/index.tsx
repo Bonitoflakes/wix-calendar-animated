@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { type DateData, Calendar } from "react-native-calendars";
 import type { Direction, MarkedDates } from "react-native-calendars/src/types";
 import { useCalendar } from "../calendar-context";
@@ -7,20 +7,29 @@ import CustomArrow from "./arrows";
 import CustomDay, { type CustomDayProps } from "./day";
 import { calendarThemeOverride } from "./theme";
 import { format } from "date-fns";
+import { Pressable, View, Text } from "react-native";
 
 export const DayView = () => {
-  const { date, updateDate, setSelectedDate, selectedDate, toggleIsOpen } = useCalendar();
+  const {
+    internalDate,
+    updateInternalDate,
+    setSelectedDate,
+    selectedDate,
+    toggleIsOpen,
+  } = useCalendar();
 
-  const headerTitle = format(date, "MMMM yyyy");
-  const initialDate = format(date, "yyyy-MM-dd");
+  const headerTitle = format(internalDate, "MMMM yyyy");
+  const initialDate = format(internalDate, "yyyy-MM-dd");
+
+  const [isDisabled, setIsDisabled] = useState(true);
 
   const handleMonthChange = useCallback(
     (data: DateData) => {
       console.log("~ handleMonthChange:", data);
       const newDate = new Date(data.dateString);
-      updateDate(newDate);
+      updateInternalDate(newDate);
     },
-    [updateDate]
+    [updateInternalDate]
   );
 
   const handleDayPress = useCallback(
@@ -30,11 +39,22 @@ export const DayView = () => {
       const newDate = new Date(dateString);
       console.log("xdate log", newDate);
       setSelectedDate(newDate);
-      updateDate(newDate);
-      toggleIsOpen();
+      updateInternalDate(newDate);
+      setIsDisabled(false);
     },
-    [toggleIsOpen, updateDate, setSelectedDate]
+    [updateInternalDate, setSelectedDate]
   );
+
+  const handleConfirm = () => {
+    toggleIsOpen();
+    // save global state.
+    // reset internal state.
+  };
+
+  const handleCancel = () => {
+    toggleIsOpen();
+    // reset internal state.
+  };
 
   const renderArrow = useCallback(
     (direction: Direction) => <CustomArrow direction={direction} />,
@@ -56,19 +76,53 @@ export const DayView = () => {
   }, [selectedDate]);
 
   return (
-    <Calendar
-      enableSwipeMonths
-      hideExtraDays
-      markedDates={markedDate}
-      onDayPress={handleDayPress}
-      initialDate={initialDate}
-      renderArrow={renderArrow}
-      onMonthChange={handleMonthChange}
-      dayComponent={renderDay}
-      customHeaderTitle={<Header title={headerTitle} />}
-      disableAllTouchEventsForDisabledDays
-      testID="day-view"
-      theme={calendarThemeOverride}
-    />
+    <View>
+      <Calendar
+        enableSwipeMonths
+        hideExtraDays
+        markedDates={markedDate}
+        onDayPress={handleDayPress}
+        initialDate={initialDate}
+        renderArrow={renderArrow}
+        onMonthChange={handleMonthChange}
+        dayComponent={renderDay}
+        customHeaderTitle={<Header title={headerTitle} />}
+        disableAllTouchEventsForDisabledDays
+        testID="day-view"
+        theme={calendarThemeOverride}
+      />
+      <View
+        style={{ flexDirection: "row", justifyContent: "flex-end", padding: 16, gap: 16 }}
+      >
+        <Pressable
+          onPress={handleCancel}
+          style={{
+            paddingVertical: 12,
+            paddingHorizontal: 18,
+            backgroundColor: "#0466C833",
+            borderRadius: 8,
+          }}
+        >
+          <Text style={{ color: "#0466C8" }}>Cancel</Text>
+        </Pressable>
+
+        <Pressable
+          onPress={handleConfirm}
+          style={[
+            {
+              paddingVertical: 12,
+              paddingHorizontal: 18,
+              backgroundColor: "#0400D1",
+              borderRadius: 8,
+            },
+            isDisabled && {
+              opacity: 0.5,
+            },
+          ]}
+        >
+          <Text style={{ color: "white" }}>Set Date</Text>
+        </Pressable>
+      </View>
+    </View>
   );
 };

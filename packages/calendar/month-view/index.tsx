@@ -6,33 +6,33 @@ import { MonthHeader } from "./header";
 
 // Separate the context consumption to a wrapper component
 export const MonthView = memo(() => {
-  const { updateDate, date: currentDate } = useCalendar();
+  const { updateInternalDate, internalDate } = useCalendar();
 
-  return <Month currentDate={currentDate} updateDate={updateDate} />;
+  return <Month internalDate={internalDate} updateInternalDate={updateInternalDate} />;
 });
 
 // Make Month a pure component that doesn't use context
 const Month = memo(
   ({
-    currentDate,
-    updateDate,
+    internalDate,
+    updateInternalDate,
   }: {
-    currentDate: Date;
-    updateDate: (date: Date ) => void;
+    internalDate: Date;
+    updateInternalDate: (date: Date) => void;
   }) => {
-    const currentYear = currentDate.getFullYear();
+    const currentYear = internalDate.getFullYear();
 
     const goToPrevYear = useCallback(() => {
-      const newDate = new Date(currentDate);
+      const newDate = new Date(internalDate);
       newDate.setFullYear(newDate.getFullYear() - 1);
-      updateDate(newDate);
-    }, [currentDate, updateDate]);
+      updateInternalDate(newDate);
+    }, [internalDate, updateInternalDate]);
 
     const goToNextYear = useCallback(() => {
-      const newDate = new Date(currentDate);
+      const newDate = new Date(internalDate);
       newDate.setFullYear(newDate.getFullYear() + 1);
-      updateDate(newDate);
-    }, [currentDate, updateDate]);
+      updateInternalDate(newDate);
+    }, [internalDate, updateInternalDate]);
 
     return (
       <View style={[styles.container]}>
