@@ -15,7 +15,9 @@ export const DayView = () => {
     updateInternalDate,
     setSelectedDate,
     selectedDate,
+    onChange,
     toggleIsOpen,
+    resetInternals,
   } = useCalendar();
 
   const headerTitle = format(internalDate, "MMMM yyyy");
@@ -48,12 +50,17 @@ export const DayView = () => {
   const handleConfirm = () => {
     toggleIsOpen();
     // save global state.
+    if (onChange && selectedDate) {
+      onChange(selectedDate);
+    }
     // reset internal state.
+    resetInternals();
   };
 
   const handleCancel = () => {
     toggleIsOpen();
     // reset internal state.
+    resetInternals();
   };
 
   const renderArrow = useCallback(

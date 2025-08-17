@@ -67,7 +67,7 @@ export default function TabFourScreen() {
 }
 
 const MyText = () => {
-  const { selectedDate } = useCalendar();
+  const { value: selectedDate } = useCalendar();
 
   if (!selectedDate) return <Text>dd-mm-yyyy</Text>;
 

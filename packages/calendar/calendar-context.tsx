@@ -1,22 +1,23 @@
-import { createContext, useCallback, useContext, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 
 const _MAX_STEPS = 3;
 const _MIN_STEPS = 1;
 
 type CalendarActions = {
-  setSelectedDate: React.Dispatch<React.SetStateAction<Date | null>>;
+  setSelectedDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
 
   incrementStep: () => void;
   decrementStep: () => void;
   toggleIsOpen: () => void;
 
   updateInternalDate: (date: Date) => void;
+  resetInternals: () => void;
 };
 
 type CalendarState = {
   step: number;
   internalDate: Date;
-  selectedDate: Date | null;
+  selectedDate?: Date;
   isOpen: boolean;
 };
 
@@ -40,11 +41,21 @@ export const CalendarProvider = ({
   const [isOpen, setIsOpen] = useState(false); // show or hide calendar modal
   const [step, setStep] = useState(1); // control which view is shown
 
-  const [internalDate, setInternalDate] = useState(resetInternalDate(value)); // local date state synced to hook form.
+  const [internalDate, setInternalDate] = useState(() => {
+    if (value) return value;
+    return new Date();
+  }); // local date state synced to hook form.
 
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null); // This is used for marking selected dates. It's internal use only.
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(value); // This is used for marking selected dates. It's internal use only.
 
   const toggleIsOpen = useCallback(() => setIsOpen((prev) => !prev), []);
+
+  useEffect(() => {
+    if (value) {
+      setSelectedDate(value);
+      updateInternalDate(value);
+    }
+  }, [value]);
 
   const incrementStep = useCallback(
     () => setStep((p) => Math.min(p + 1, _MAX_STEPS)),
@@ -57,11 +68,19 @@ export const CalendarProvider = ({
 
   const updateInternalDate = (date: Date) => {
     setInternalDate(date);
-    if (onChange) onChange(date);
+    // if (onChange) onChange(date);
+  };
+
+  const resetInternals = () => {
+    const initialDate = value ?? new Date();
+    const selectedDate = value ?? undefined;
+    setInternalDate(initialDate);
+    setSelectedDate(selectedDate);
   };
 
   const memoedValues = {
     step,
+    value,
     internalDate,
     selectedDate,
     isOpen,
@@ -71,17 +90,13 @@ export const CalendarProvider = ({
     incrementStep,
     decrementStep,
     updateInternalDate,
+    resetInternals,
   };
 
   return (
     <CalendarContext.Provider value={memoedValues}>{children}</CalendarContext.Provider>
   );
 };
-
-function resetInternalDate(value?: Date) {
-  if (value) return value;
-  return new Date();
-}
 
 export function useCalendar() {
   const context = useContext(CalendarContext);

@@ -46,23 +46,31 @@ export const Trigger: FC<{
 export const Modal: FC<{
   children: ReactNode;
 }> = ({ children }) => {
-  const { isOpen, toggleIsOpen } = useCalendar();
+  const { isOpen, toggleIsOpen, resetInternals } = useCalendar();
   return (
     <RNModal
       visible={isOpen}
       transparent
       statusBarTranslucent
       animationType="fade"
-      onRequestClose={toggleIsOpen}
+      onRequestClose={() => {
+        resetInternals();
+        toggleIsOpen();
+      }}
     >
-      <TouchableWithoutFeedback onPress={toggleIsOpen}>
+      <TouchableWithoutFeedback
+        onPress={() => {
+          resetInternals();
+          toggleIsOpen();
+        }}
+      >
         <View
           style={{
             padding: 20,
             flex: 1,
             width: "100%",
             backgroundColor: "0 2px 8px rgba(0, 0, 0, 0.5)",
-            justifyContent: "center",
+            paddingTop: 200,
           }}
         >
           <TouchableWithoutFeedback>{children}</TouchableWithoutFeedback>
