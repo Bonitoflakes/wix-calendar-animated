@@ -11,6 +11,9 @@
     "preview": {
       "distribution": "internal"
     },
+    "staging": {
+      "distribution": "internal"
+    },
     "production": {
       "autoIncrement": true
     }
