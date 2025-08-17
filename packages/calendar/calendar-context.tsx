@@ -61,7 +61,7 @@ export const CalendarProvider = ({
 
   const updateDate = (date: Date) => {
     setInternalDate(date);
-    // if (onChange) onChange(date);
+    if (onChange) onChange(date);
   };
 
   const memoedValues = {

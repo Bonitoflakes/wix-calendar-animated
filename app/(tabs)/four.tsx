@@ -4,22 +4,12 @@ import { View, Text, Button } from "react-native";
 import { z } from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format, subYears } from "date-fns";
+import { format } from "date-fns";
 
 const FormSchema = z.object({
-  dob: z
-    .date({
-      required_error: "A date of birth is required.",
-    })
-    .refine(
-      (date) => {
-        const eighteenYearsAgo = subYears(new Date(), 18);
-        return date <= eighteenYearsAgo;
-      },
-      {
-        message: "You must be at least 18 years old.",
-      }
-    ),
+  dob: z.date({
+    required_error: "A date of birth is required.",
+  }),
 });
 
 export default function TabFourScreen() {
@@ -40,8 +30,8 @@ export default function TabFourScreen() {
       }}
     >
       <Text>
-        gibberish Lot of gibberish Lot of gibberish Lot of gibberish Lot of gibberish Lot of
-        gibberish Lot of gibberish Lot of gibberish Lot of gibberish
+        gibberish Lot of gibberish Lot of gibberish Lot of gibberish Lot of gibberish Lot
+        of gibberish Lot of gibberish Lot of gibberish Lot of gibberish
       </Text>
 
       <Controller
