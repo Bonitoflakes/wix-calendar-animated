@@ -3,36 +3,35 @@ import { memo, useCallback } from "react";
 import { useCalendar } from "../calendar-context";
 import { MonthGridWrapper } from "./grid";
 import { MonthHeader } from "./header";
+import { addYears, subYears } from "date-fns";
 
 // Separate the context consumption to a wrapper component
 export const MonthView = memo(() => {
-  const { updateInternalDate, internalDate } = useCalendar();
+  const { updateDraftDate, draftDate } = useCalendar();
 
-  return <Month internalDate={internalDate} updateInternalDate={updateInternalDate} />;
+  return <Month draftDate={draftDate} updateDraftDate={updateDraftDate} />;
 });
 
 // Make Month a pure component that doesn't use context
 const Month = memo(
   ({
-    internalDate,
-    updateInternalDate,
+    draftDate,
+    updateDraftDate,
   }: {
-    internalDate: Date;
-    updateInternalDate: (date: Date) => void;
+    draftDate: Date;
+    updateDraftDate: (date: Date) => void;
   }) => {
-    const currentYear = internalDate.getFullYear();
+    const currentYear = draftDate.getFullYear();
 
     const goToPrevYear = useCallback(() => {
-      const newDate = new Date(internalDate);
-      newDate.setFullYear(newDate.getFullYear() - 1);
-      updateInternalDate(newDate);
-    }, [internalDate, updateInternalDate]);
+      const newDate = subYears(draftDate, 1);
+      updateDraftDate(newDate);
+    }, [draftDate, updateDraftDate]);
 
     const goToNextYear = useCallback(() => {
-      const newDate = new Date(internalDate);
-      newDate.setFullYear(newDate.getFullYear() + 1);
-      updateInternalDate(newDate);
-    }, [internalDate, updateInternalDate]);
+      const newDate = addYears(draftDate, 1);
+      updateDraftDate(newDate);
+    }, [draftDate, updateDraftDate]);
 
     return (
       <View style={[styles.container]}>

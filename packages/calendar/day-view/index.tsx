@@ -7,31 +7,33 @@ import CustomArrow from "./arrows";
 import CustomDay, { type CustomDayProps } from "./day";
 import { calendarThemeOverride } from "./theme";
 import { format } from "date-fns";
-import { Pressable, View, Text } from "react-native";
+import { Pressable, View, Text, StyleSheet } from "react-native";
+import type { MarkingProps } from "react-native-calendars/src/calendar/day/marking";
 
 export const DayView = () => {
   const {
-    internalDate,
-    updateInternalDate,
+    draftDate,
+    updateDraftDate,
     setSelectedDate,
     selectedDate,
     onChange,
-    toggleIsOpen,
+    toggleModal,
     resetInternals,
   } = useCalendar();
 
-  const headerTitle = format(internalDate, "MMMM yyyy");
-  const initialDate = format(internalDate, "yyyy-MM-dd");
+  const headerTitle = format(draftDate, "MMMM yyyy");
+  const currentDateString = format(draftDate, "yyyy-MM-dd");
 
+  // enable confirm button only on successful day selection.
   const [isDisabled, setIsDisabled] = useState(true);
 
   const handleMonthChange = useCallback(
     (data: DateData) => {
       console.log("~ handleMonthChange:", data);
       const newDate = new Date(data.dateString);
-      updateInternalDate(newDate);
+      updateDraftDate(newDate);
     },
-    [updateInternalDate]
+    [updateDraftDate]
   );
 
   const handleDayPress = useCallback(
@@ -39,16 +41,15 @@ export const DayView = () => {
       const { dateString } = data;
       console.log("~ handleDayPress:", dateString);
       const newDate = new Date(dateString);
-      console.log("xdate log", newDate);
       setSelectedDate(newDate);
-      updateInternalDate(newDate);
+      updateDraftDate(newDate);
       setIsDisabled(false);
     },
-    [updateInternalDate, setSelectedDate]
+    [updateDraftDate, setSelectedDate]
   );
 
   const handleConfirm = () => {
-    toggleIsOpen();
+    toggleModal();
     // save global state.
     if (onChange && selectedDate) {
       onChange(selectedDate);
@@ -58,7 +59,7 @@ export const DayView = () => {
   };
 
   const handleCancel = () => {
-    toggleIsOpen();
+    toggleModal();
     // reset internal state.
     resetInternals();
   };
@@ -71,25 +72,22 @@ export const DayView = () => {
   const renderDay = useCallback((data: CustomDayProps) => <CustomDay {...data} />, []);
 
   const markedDate = useMemo<MarkedDates>(() => {
+    const formatOptions: MarkingProps = { selected: true, selectedColor: "blue" };
     const formattedDate = selectedDate ? format(selectedDate, "yyyy-MM-dd") : "";
-    return selectedDate
-      ? {
-          [formattedDate]: {
-            selected: true,
-            selectedColor: "blue",
-          },
-        }
-      : {};
+
+    return {
+      [formattedDate]: formatOptions,
+    };
   }, [selectedDate]);
 
   return (
     <View>
       <Calendar
-        enableSwipeMonths
+        enableSwipeMonths={false}
         hideExtraDays
         markedDates={markedDate}
         onDayPress={handleDayPress}
-        current={initialDate}
+        current={currentDateString}
         renderArrow={renderArrow}
         onMonthChange={handleMonthChange}
         dayComponent={renderDay}
@@ -97,39 +95,55 @@ export const DayView = () => {
         disableAllTouchEventsForDisabledDays
         testID="day-view"
         theme={calendarThemeOverride}
+        maxDate="2100-12-31"
+        minDate="1970-01-01"
       />
-      <View
-        style={{ flexDirection: "row", justifyContent: "flex-end", padding: 16, gap: 16 }}
-      >
-        <Pressable
-          onPress={handleCancel}
-          style={{
-            paddingVertical: 12,
-            paddingHorizontal: 18,
-            backgroundColor: "#0466C833",
-            borderRadius: 8,
-          }}
-        >
-          <Text style={{ color: "#0466C8" }}>Cancel</Text>
+
+      <View style={styles.buttonContainer}>
+        <Pressable onPress={handleCancel} style={styles.cancelButton}>
+          <Text style={styles.cancelText}>Cancel</Text>
         </Pressable>
 
         <Pressable
           onPress={handleConfirm}
           style={[
-            {
-              paddingVertical: 12,
-              paddingHorizontal: 18,
-              backgroundColor: "#0400D1",
-              borderRadius: 8,
-            },
+            styles.confirmButton,
             isDisabled && {
               opacity: 0.5,
             },
           ]}
+          disabled={isDisabled}
         >
-          <Text style={{ color: "white" }}>Set Date</Text>
+          <Text style={styles.confirmText}>Set Date</Text>
         </Pressable>
       </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  confirmButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 18,
+    backgroundColor: "#0400D1",
+    borderRadius: 8,
+  },
+  cancelButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 18,
+    backgroundColor: "#0466C833",
+    borderRadius: 8,
+  },
+  confirmText: {
+    color: "white",
+  },
+  cancelText: {
+    color: "#0466C8",
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    padding: 16,
+    gap: 16,
+  },
+});

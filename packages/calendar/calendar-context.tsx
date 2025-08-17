@@ -7,23 +7,24 @@ import {
   type ReactNode,
 } from "react";
 
-const _MAX_STEPS = 3;
+// day | month | year
 const _MIN_STEPS = 1;
+const _MAX_STEPS = 3;
 
 type CalendarActions = {
   setSelectedDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
 
   incrementStep: () => void;
   decrementStep: () => void;
-  toggleIsOpen: () => void;
+  toggleModal: () => void;
 
-  updateInternalDate: (date: Date) => void;
+  updateDraftDate: (date: Date) => void;
   resetInternals: () => void;
 };
 
 type CalendarState = {
   step: number;
-  internalDate: Date;
+  draftDate: Date;
   selectedDate?: Date;
   isOpen: boolean;
 };
@@ -48,19 +49,20 @@ export const CalendarProvider = ({
   const [isOpen, setIsOpen] = useState(false); // show or hide calendar modal
   const [step, setStep] = useState(1); // control which view is shown
 
-  const [internalDate, setInternalDate] = useState(() => {
+  const [draftDate, setDraftDate] = useState(() => {
     if (value) return value;
     return new Date();
-  }); // local date state synced to hook form.
+  }); // local date state. It's internal use only.
 
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(value); // This is used for marking selected dates. It's internal use only.
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(value); // This is used for marking selected dates and placeholder for global date onChange
 
-  const toggleIsOpen = useCallback(() => setIsOpen((prev) => !prev), []);
+  const toggleModal = useCallback(() => setIsOpen((prev) => !prev), []);
 
   useEffect(() => {
     if (value) {
+      console.log("Hook form value has changed", value);
       setSelectedDate(value);
-      updateInternalDate(value);
+      setDraftDate(value);
     }
   }, [value]);
 
@@ -68,40 +70,39 @@ export const CalendarProvider = ({
     () => setStep((p) => Math.min(p + 1, _MAX_STEPS)),
     []
   );
+
   const decrementStep = useCallback(
     () => setStep((p) => Math.max(p - 1, _MIN_STEPS)),
     []
   );
 
-  const updateInternalDate = (date: Date) => {
-    setInternalDate(date);
-    // if (onChange) onChange(date);
-  };
+  const updateDraftDate = useCallback((date: Date) => setDraftDate(date), []);
 
-  const resetInternals = () => {
+  const resetInternals = useCallback(() => {
     const initialDate = value ?? new Date();
     const selectedDate = value ?? undefined;
-    setInternalDate(initialDate);
+    console.log("Resetting internals with:", initialDate, selectedDate);
+    setDraftDate(initialDate);
     setSelectedDate(selectedDate);
-  };
+  }, [value]);
 
-  const memoedValues = {
+  const contextValues = {
     step,
     value,
-    internalDate,
+    draftDate,
     selectedDate,
     isOpen,
+    toggleModal,
     onChange,
-    toggleIsOpen,
     setSelectedDate,
+    updateDraftDate,
     incrementStep,
     decrementStep,
-    updateInternalDate,
     resetInternals,
   };
 
   return (
-    <CalendarContext.Provider value={memoedValues}>{children}</CalendarContext.Provider>
+    <CalendarContext.Provider value={contextValues}>{children}</CalendarContext.Provider>
   );
 };
 

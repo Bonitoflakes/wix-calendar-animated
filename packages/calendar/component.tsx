@@ -24,7 +24,7 @@ export const Trigger: FC<{
   children: ReactNode;
   pressableStyle?: ViewStyle;
 }> = ({ children, pressableStyle }) => {
-  const { toggleIsOpen } = useCalendar();
+  const { toggleModal } = useCalendar();
   return (
     <Pressable
       style={{
@@ -33,7 +33,7 @@ export const Trigger: FC<{
         borderWidth: 1,
         ...pressableStyle,
       }}
-      onPress={toggleIsOpen}
+      onPress={toggleModal}
       onLayout={(e) => {
         console.log(e.nativeEvent.layout, "onLayout");
       }}
@@ -46,7 +46,7 @@ export const Trigger: FC<{
 export const Modal: FC<{
   children: ReactNode;
 }> = ({ children }) => {
-  const { isOpen, toggleIsOpen, resetInternals } = useCalendar();
+  const { isOpen, toggleModal, resetInternals } = useCalendar();
   return (
     <RNModal
       visible={isOpen}
@@ -55,13 +55,13 @@ export const Modal: FC<{
       animationType="fade"
       onRequestClose={() => {
         resetInternals();
-        toggleIsOpen();
+        toggleModal();
       }}
     >
       <TouchableWithoutFeedback
         onPress={() => {
           resetInternals();
-          toggleIsOpen();
+          toggleModal();
         }}
       >
         <View

@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { View, Pressable, Text, StyleSheet } from "react-native";
 import { useCalendar } from "../calendar-context";
+import { setMonth } from "date-fns";
 
 const _MONTHS = [
   "January",
@@ -17,39 +18,38 @@ const _MONTHS = [
   "December",
 ];
 
-// Separate context consumption in MonthGrid. This prevents re-renders when something changes in the context as the memo kicks in to compare
+// Separate context consumption in MonthGrid. This prevents re-renders if something changes in the context as the memo kicks in to compare
 export const MonthGridWrapper = memo(() => {
-  const { updateInternalDate, decrementStep, internalDate: date } = useCalendar();
+  const { updateDraftDate, decrementStep, draftDate } = useCalendar();
 
   return (
     <MonthGrid
-      currentDate={date}
-      updateInternalDate={updateInternalDate}
+      draftDate={draftDate}
+      updateDraftDate={updateDraftDate}
       decrementStep={decrementStep}
     />
   );
 });
 
 type MonthGridProps = {
-  currentDate: Date;
-  updateInternalDate: (date: Date) => void;
+  draftDate: Date;
+  updateDraftDate: (date: Date) => void;
   decrementStep: () => void;
 };
 
 const MonthGrid = memo(
-  ({ currentDate, updateInternalDate, decrementStep }: MonthGridProps) => {
+  ({ draftDate, updateDraftDate, decrementStep }: MonthGridProps) => {
     return (
       <View style={[styles.gridContainer]}>
         {_MONTHS.map((month, idx) => {
-          const isActive = currentDate.getMonth() === idx;
+          const isActive = draftDate.getMonth() === idx;
 
           return (
             <Pressable
               key={idx}
               onPress={() => {
-                const newDate = new Date(currentDate);
-                newDate.setMonth(idx);
-                updateInternalDate(newDate);
+                const newDate = setMonth(draftDate, idx);
+                updateDraftDate(newDate);
                 decrementStep();
               }}
               style={[styles.monthButton, isActive && styles.activeMonthButton]}

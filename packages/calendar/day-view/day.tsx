@@ -8,7 +8,10 @@ export type CustomDayProps = BasicDayProps & {
 };
 
 const CustomDay = (props: CustomDayProps) => {
-  //   console.log("🚀🚀🚀 ~ CustomDay ~ props:", props);
+  if (props.testID === "day-view.day_2100-12-23") {
+    console.log("🚀🚀🚀 ~ CustomDay ~ props:", JSON.stringify(props, null, 2));
+    console.log(props);
+  }
 
   const { state, marking, date, onPress, accessibilityLabel, testID } = props;
 
