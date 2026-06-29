@@ -41,7 +41,7 @@
     "zod": "3.24.4"
   },
   "devDependencies": {
-    "@babel/core": "^7.25.2",
+    "@babel/core": "^7.29.6",
     "@types/react": "~19.0.10",
     "@types/xdate": "^0.8.35",
     "eslint": "^9.27.0",
